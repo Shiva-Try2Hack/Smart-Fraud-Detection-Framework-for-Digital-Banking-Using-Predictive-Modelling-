@@ -442,8 +442,28 @@ class ServerAdminGUI(tk.Tk):
 
         self._append_formatted_log("[*] Initializing server subprocess...\n")
 
+        workspace_dir = os.path.dirname(os.path.abspath(__file__)) if not getattr(sys, 'frozen', False) else os.path.dirname(sys.executable)
+
+        # In frozen executable mode, run uvicorn in an embedded thread/process or using sys.executable
+        if getattr(sys, 'frozen', False):
+            # Frozen exe: run in-process background thread to serve uvicorn
+            import uvicorn
+            def run_uvicorn_in_thread():
+                try:
+                    config = uvicorn.Config("src.main:app", host="127.0.0.1", port=8000, log_level="info")
+                    self.server_instance = uvicorn.Server(config)
+                    self.log_queue.put(("LOG", "[+] Uvicorn server running in embedded mode on http://127.0.0.1:8000!\n"))
+                    self.server_instance.run()
+                except Exception as ex:
+                    self.log_queue.put(("LOG", f"[-] Server error: {str(ex)}\n"))
+                self.log_queue.put(("STATUS", "Server terminated."))
+
+            self.server_thread = threading.Thread(target=run_uvicorn_in_thread, daemon=True)
+            self.server_thread.start()
+            self._append_formatted_log("[+] Uvicorn server successfully launched on http://127.0.0.1:8000!\n")
+            return
+
         cmd = [sys.executable, "-m", "uvicorn", "src.main:app", "--host", "127.0.0.1", "--port", "8000", "--log-level", "info"]
-        workspace_dir = os.path.dirname(os.path.abspath(__file__))
 
         try:
             self.server_process = subprocess.Popen(
@@ -472,6 +492,10 @@ class ServerAdminGUI(tk.Tk):
         self.log_queue.put(("STATUS", "Server process terminated."))
 
     def stop_server(self):
+        if hasattr(self, 'server_instance') and self.server_instance:
+            self.server_instance.should_exit = True
+            self.server_instance = None
+
         if self.server_process:
             try:
                 self.server_process.terminate()
