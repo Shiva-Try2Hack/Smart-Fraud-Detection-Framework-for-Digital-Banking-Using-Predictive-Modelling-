@@ -21,3 +21,8 @@ ENV/
 Thumbs.db
 Desktop.ini
 .DS_Store
+
+# Build & Installer Artifacts
+build/
+dist/
+*.egg-info/
