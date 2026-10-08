@@ -1,0 +1,105 @@
+====================================================================================================
+               COMMAND REFERENCE CHEATSHEET - BACKEND SERVER & ADMIN CMD OPERATIONS
+====================================================================================================
+Use this cheatsheet to run the backend server, monitor live transactions, and execute
+transfers or account operations directly through Command Prompt (CMD).
+
+----------------------------------------------------------------------------------------------------
+1. CORE SERVICES (RUN IN SEPARATE CMD WINDOWS)
+----------------------------------------------------------------------------------------------------
+
+[OPTION A - GRAPHICAL DASHBOARD: ALL-IN-ONE TKINTER UI]
+  Command:
+    python server_ui.py
+  Explanation:
+    Combines the server controller, real-time logs, live transaction surveillance,
+    and admin command console into a single desktop GUI window.
+    - Start / Stop server button.
+    - Live streaming server logs & alert badges.
+    - Interactive admin shell with quick buttons (List, Stats, Clear, Help).
+
+[OPTION B - TERMINAL 1: START BACKEND SERVER VIA CLI]
+  Command:
+    python run_server.py
+  Explanation:
+    Boots the backend with an interactive startup prompt, loads the trained Random Forest
+    and Isolation Forest ML models, initializes SQLite database, and streams all A-Z logs.
+
+[TERMINAL 2: INTERACTIVE ADMIN CONTROLLER & LIVE SURVEILLANCE]
+  Command:
+    python admin_monitor.py
+  Authentication:
+    Username: admin
+    Password: thisismypassword
+  Explanation:
+    Combines BOTH Live Surveillance and an Interactive Shell in one single CMD window:
+    - Protected by secure login prompt.
+    - You get an interactive 'admin>' prompt where you can execute payments, manage balances, 
+      create users, or check stats.
+    - Whenever a transaction happens (from this shell, an API, or external payment app),
+      the live surveillance feed interrupts with real-time colored alerts:
+      * Blinking yellow [ ! ] indicators
+      * Bold GREEN for APPROVED
+      * Bold RED for BLOCKED
+
+----------------------------------------------------------------------------------------------------
+2. SIMULATING TRANSACTIONS VIA SHORT CMD ARGUMENTS (FASTEST WAY TO TEST)
+----------------------------------------------------------------------------------------------------
+
+[SHORT FLAGS CHEATSHEET]
+  -s : Sender UPI ID
+  -r : Receiver UPI ID
+  -a : Transfer Amount (INR)
+  -p : UPI PIN
+  -t : Optional Timestamp
+  -u : Username or UPI ID (for balance, PIN, and account operations)
+
+[EXECUTE A SAFE LEGITIMATE PAYMENT]
+  python manage_users.py pay -s shiva@okaxis -r prasad@oksbi -a 2500 -p 1234
+  -> Results in APPROVED. Shiva's balance deducts by 2500, Prasad's increases by 2500.
+
+[EXECUTE A PAYMENT WITH CUSTOM TIMESTAMP]
+  python manage_users.py pay -s sayali@okhdfc -r minal@okicici -a 1500 -p 2233 -t "2026-10-05 03:45:00"
+
+[EXECUTE A PAYMENT TO AN EVIL / BLACKLISTED MULE ACCOUNT]
+  python manage_users.py pay -s shiva@okaxis -r evil.darkmule@darkpay -a 5000 -p 1234
+  -> Results in BLOCKED! Immediate Blacklist Alert in Admin Monitor.
+
+[EXECUTE A CRITICAL BALANCE DRAIN FRAUD ATTEMPT]
+  python manage_users.py pay -s prathamesh@okpaytm -r prasad@oksbi -a 54900 -p 4455
+  -> Results in BLOCKED! Draining >95% balance triggers heuristic + ML anomaly flags.
+
+[EXECUTE WITH WRONG UPI PIN]
+  python manage_users.py pay -s shiva@okaxis -r prasad@oksbi -a 1000 -p 9999
+  -> Results in BLOCKED! Security alert: Incorrect UPI PIN supplied.
+
+----------------------------------------------------------------------------------------------------
+3. ACCOUNT & BALANCE MANAGEMENT SHORT COMMANDS
+----------------------------------------------------------------------------------------------------
+
+[CHECK BALANCE OF ANY USER]
+  python manage_users.py balance -u shiva
+  python manage_users.py balance -u prasad@oksbi
+
+[LIST ALL USERS & DUMMY ACCOUNTS]
+  python manage_users.py list
+
+[DEPOSIT / ADD BALANCE TO AN ACCOUNT]
+  python manage_users.py add-balance -u shiva -a 10000
+
+[DEDUCT / WITHDRAW BALANCE FROM AN ACCOUNT]
+  python manage_users.py deduct-balance -u prasad -a 5000
+
+[CHANGE ACCOUNT UPI PIN / PASSWORD]
+  python manage_users.py set-pin -u sayali -p 8899
+
+[CREATE A NEW LEGITIMATE USER]
+  python manage_users.py create -u rahul -n "Rahul Sharma" -p 1234 -b 35000
+
+[CREATE A NEW EVIL DUMMY ACCOUNT]
+  python manage_users.py create -u evil_bot -n "Evil Bot Net" -p 0000 -b 0 -e
+
+[DELETE AN ACCOUNT]
+  python manage_users.py delete -u rahul
+
+====================================================================================================

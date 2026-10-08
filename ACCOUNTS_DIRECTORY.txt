@@ -1,0 +1,80 @@
+====================================================================================================
+                        BANKING USERS & DUMMY ACCOUNTS DIRECTORY
+====================================================================================================
+Generated for: Smart Fraud Detection Framework (Real-Time UPI Simulation)
+Note: Every user has their own unique UPI ID containing their name.
+      Default test PINs are listed below.
+
+----------------------------------------------------------------------------------------------------
+1. LEGITIMATE STUDENT BANK ACCOUNTS
+----------------------------------------------------------------------------------------------------
+
+[USER 1]
+  Full Name:       Shiva
+  Username:        shiva
+  UPI ID:          shiva@okaxis
+  Security PIN:    1234
+  Initial Balance: INR 80,000.00
+  Status:          Active / Clean
+
+[USER 2]
+  Full Name:       Prasad Kadu
+  Username:        prasad
+  UPI ID:          prasad@oksbi
+  Security PIN:    1122
+  Initial Balance: INR 60,000.00
+  Status:          Active / Clean
+
+[USER 3]
+  Full Name:       Sayali Dahake
+  Username:        sayali
+  UPI ID:          sayali@okhdfc
+  Security PIN:    2233
+  Initial Balance: INR 45,000.00
+  Status:          Active / Clean
+
+[USER 4]
+  Full Name:       Minal Thakare
+  Username:        minal
+  UPI ID:          minal@okicici
+  Security PIN:    3344
+  Initial Balance: INR 50,000.00
+  Status:          Active / Clean
+
+[USER 5]
+  Full Name:       Prathamesh Meshram
+  Username:        prathamesh
+  UPI ID:          prathamesh@okpaytm
+  Security PIN:    4455
+  Initial Balance: INR 55,000.00
+  Status:          Active / Clean
+
+----------------------------------------------------------------------------------------------------
+2. DUMMY EVIL / SYNDICATE MULE ACCOUNTS (For Fraud & Blacklist Testing)
+----------------------------------------------------------------------------------------------------
+
+[EVIL DUMMY 1]
+  Full Name:       Dark Mule Node 01
+  Username:        evil_darkmule
+  UPI ID:          evil.darkmule@darkpay
+  Security PIN:    0000
+  Initial Balance: INR 250.00
+  Status:          BLACKLISTED (Any transfer sent here is automatically intercepted and BLOCKED)
+
+[EVIL DUMMY 2]
+  Full Name:       Syndicate Phisher X
+  Username:        evil_phisher
+  UPI ID:          evil.phisher@shadowbank
+  Security PIN:    0000
+  Initial Balance: INR 100.00
+  Status:          BLACKLISTED (Phishing syndicate node)
+
+[EVIL DUMMY 3]
+  Full Name:       Launderer Ghost Hub
+  Username:        evil_launderer
+  UPI ID:          evil.launderer@ghostupi
+  Security PIN:    0000
+  Initial Balance: INR 0.00
+  Status:          BLACKLISTED (Money laundering shell account)
+
+====================================================================================================
