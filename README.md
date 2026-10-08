@@ -6,13 +6,14 @@
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Scikit-Learn](https://img.shields.io/badge/ML-Scikit--Learn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)](https://scikit-learn.org)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
-[![SQLite](https://img.shields.io/badge/Database-SQLite3-003B57?style=for-the-badge&logo=sqlite&logoColor=white)](https://sqlite.org)
-[![Streamlit](https://img.shields.io/badge/Testing%20UI-Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io)
+[![Windows MSI Installer](https://img.shields.io/badge/Windows_Installer-Download_.MSI-blue?style=for-the-badge&logo=windows)](https://github.com/Shiva-Try2Hack/Smart-Fraud-Detection-Framework-for-Digital-Banking-Using-Predictive-Modelling-/releases/download/v2.2.0/SFDF-Server-2.2.0-win64.msi)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 
 <br/>
 
 **Production-ready, low-latency banking fraud interception framework with multi-layer ML inference and real-time transaction scoring.**
+
+[📥 **Download Windows Installer (.msi)**](https://github.com/Shiva-Try2Hack/Smart-Fraud-Detection-Framework-for-Digital-Banking-Using-Predictive-Modelling-/releases/download/v2.2.0/SFDF-Server-2.2.0-win64.msi) | [📦 **View v2.2.0 Release Notes**](https://github.com/Shiva-Try2Hack/Smart-Fraud-Detection-Framework-for-Digital-Banking-Using-Predictive-Modelling-/releases/tag/v2.2.0)
 
 </div>
 
