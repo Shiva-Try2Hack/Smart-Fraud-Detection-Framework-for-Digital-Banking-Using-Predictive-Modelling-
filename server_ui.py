@@ -1,7 +1,7 @@
 """
 Clean Dark/Graphite Server Controller & Admin Surveillance Desktop Application.
 Unified single-window application with:
-1. In-Window Admin Authentication Screen (Username: admin, Password: thisismypassword).
+1. In-Window Admin Authentication Screen with configurable credentials.
 2. Clean, elegant dark-neutral palette (slate/graphite, no harsh blue).
 3. Server Start / Stop controls.
 4. Log Display:
@@ -34,9 +34,9 @@ from tkinter import ttk, messagebox, scrolledtext
 
 API_BASE = "http://127.0.0.1:8000"
 
-# Admin credentials
-ADMIN_USER = "admin"
-ADMIN_PASS = "thisismypassword"
+# Admin credentials loaded securely from environment or local defaults
+ADMIN_USER = os.getenv("ADMIN_USER", "admin")
+ADMIN_PASS = os.getenv("ADMIN_PASS", "thisismypassword")
 
 
 class ServerAdminGUI(tk.Tk):
@@ -175,7 +175,7 @@ class ServerAdminGUI(tk.Tk):
             self.login_frame.destroy()
             self._init_main_dashboard()
         else:
-            messagebox.showerror("Authentication Failed", "Invalid Admin credentials!\nUsername: admin\nPassword: thisismypassword")
+            messagebox.showerror("Authentication Failed", "Invalid Admin credentials!\nPlease check your admin username and password.")
             self.ent_pass.delete(0, tk.END)
             self.ent_pass.focus_set()
 

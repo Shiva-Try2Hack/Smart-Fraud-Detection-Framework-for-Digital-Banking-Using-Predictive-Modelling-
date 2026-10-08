@@ -145,7 +145,7 @@ python server_ui.py
 ```
 
 ### 🔐 1. Admin Security Gate
-Secured with admin credentials (`admin` / `thisismypassword`) directly in an embedded security card.
+Access to the server controller and surveillance console is protected by an administrative security gate. Credentials can be configured via environment variables (`ADMIN_USER` and `ADMIN_PASS`) or set in your local deployment configuration.
 
 <p align="center">
   <img src="docs/screenshots/admin_login_gate.png" alt="Admin Security Gate" width="650"/>
