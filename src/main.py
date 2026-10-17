@@ -16,9 +16,9 @@ from src.db.database import (
 )
 
 app = FastAPI(
-    title="Smart Fraud Detection Framework API",
-    description="Backend Scoring Engine & Surveillance API with Account State",
-    version="2.1.0"
+    title="Nexus FDS — Fraud Detection & Surveillance Server API",
+    description="Nexus FDS Backend Scoring Engine & Digital Banking Surveillance API",
+    version="2.3.0"
 )
 
 app.add_middleware(
@@ -57,9 +57,9 @@ class PaymentResponse(BaseModel):
 @app.get("/")
 def health_check():
     return {
-        "service": "Smart Fraud Detection Framework API",
+        "service": "Nexus FDS Server API",
         "status": "online",
-        "version": "2.1.0"
+        "version": "2.3.0"
     }
 
 @app.get("/api/accounts")

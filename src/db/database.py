@@ -1,12 +1,32 @@
 import sqlite3
 import os
+import sys
 import json
 from datetime import datetime
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "database.sqlite")
+def _resolve_db_path():
+    candidates = [
+        os.path.join(os.path.dirname(__file__), "..", "..", "database.sqlite"),
+        os.path.join(os.path.dirname(__file__), "..", "database.sqlite"),
+    ]
+    if getattr(sys, "frozen", False):
+        exe_dir = os.path.dirname(sys.executable)
+        candidates.extend([
+            os.path.join(exe_dir, "database.sqlite"),
+            os.path.join(exe_dir, "lib", "database.sqlite"),
+        ])
+    cwd = os.getcwd()
+    candidates.append(os.path.join(cwd, "database.sqlite"))
+    for c in candidates:
+        norm = os.path.abspath(c)
+        if os.path.exists(norm):
+            return norm
+    return os.path.abspath(candidates[0])
+
+DB_PATH = _resolve_db_path()
 
 def get_connection():
-    return sqlite3.connect(DB_PATH)
+    return sqlite3.connect(_resolve_db_path())
 
 def init_db():
     conn = get_connection()

@@ -29,8 +29,31 @@ import uuid
 import re
 from datetime import datetime
 
+# Prevent 'Unable to configure formatter default' in Win32GUI frozen executables where stdout/stderr are None
+class _SafeStream:
+    def write(self, text):
+        pass
+    def flush(self):
+        pass
+    def isatty(self):
+        return False
+
+if sys.stdout is None:
+    sys.stdout = _SafeStream()
+if sys.stderr is None:
+    sys.stderr = _SafeStream()
+
 import tkinter as tk
 from tkinter import ttk, messagebox, scrolledtext
+from PIL import Image, ImageTk
+
+# Set explicit Windows AppUserModelID so taskbar displays the custom logo icon
+try:
+    import ctypes
+    myappid = "nexusfds.fraudsurveillance.server.2.3.0"
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+except Exception:
+    pass
 
 API_BASE = "http://127.0.0.1:8000"
 
@@ -42,9 +65,64 @@ ADMIN_PASS = os.getenv("ADMIN_PASS", "thisismypassword")
 class ServerAdminGUI(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Banking Fraud Detection - Server Controller & Admin Console")
+        self.title("Nexus FDS — Fraud Detection & Surveillance Server")
         self.geometry("1180x760")
         self.minsize(980, 620)
+
+        # Set application icon for both window titlebar and Windows Taskbar
+        base_dir = os.path.dirname(sys.executable) if getattr(sys, 'frozen', False) else os.path.dirname(os.path.abspath(__file__))
+        ico_candidates = [
+            os.path.join(base_dir, "assets", "app_icon.ico"),
+            os.path.join(base_dir, "app_icon.ico"),
+            os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "app_icon.ico"),
+            os.path.join(os.path.dirname(os.path.abspath(__file__)), "app_icon.ico"),
+        ]
+        for ico in ico_candidates:
+            if os.path.exists(ico):
+                try:
+                    self.iconbitmap(default=ico)
+                    break
+                except Exception:
+                    pass
+
+        # Also use iconphoto with PNG for taskbar rendering
+        png_candidates = [
+            os.path.join(base_dir, "assets", "new_emblem_cropped.png"),
+            os.path.join(base_dir, "assets", "logo.png"),
+            os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "new_emblem_cropped.png"),
+        ]
+        self._app_taskbar_img = None
+        for png in png_candidates:
+            if os.path.exists(png):
+                try:
+                    p_img = Image.open(png).convert("RGBA")
+                    # Square icon canvas with transparent background
+                    sz = max(p_img.width, p_img.height)
+                    sq = Image.new("RGBA", (sz, sz), (0, 0, 0, 0))
+                    sq.paste(p_img, ((sz - p_img.width)//2, (sz - p_img.height)//2), p_img)
+                    self._app_taskbar_img = ImageTk.PhotoImage(sq.resize((64, 64), Image.Resampling.LANCZOS))
+                    self.iconphoto(True, self._app_taskbar_img)
+                    break
+                except Exception:
+                    pass
+
+        # Load logo images
+        self.logo_path = os.path.join(base_dir, "assets", "logo.png")
+        self.login_logo_img = None
+        self.header_logo_img = None
+        if os.path.exists(self.logo_path):
+            try:
+                raw_logo = Image.open(self.logo_path).convert("RGBA")
+                # Login card logo (approx 200px wide)
+                l_w = 200
+                l_h = int(raw_logo.height * (l_w / raw_logo.width))
+                self.login_logo_img = ImageTk.PhotoImage(raw_logo.resize((l_w, l_h), Image.Resampling.LANCZOS))
+                # Header logo (approx 34px high)
+                h_h = 32
+                h_w = int(raw_logo.width * (h_h / raw_logo.height))
+                self.header_logo_img = ImageTk.PhotoImage(raw_logo.resize((h_w, h_h), Image.Resampling.LANCZOS))
+            except Exception:
+                pass
 
         # Clean Dark Graphite Palette (Zinc / Neutral)
         self.c_bg = "#121214"         # Base background
@@ -83,20 +161,28 @@ class ServerAdminGUI(tk.Tk):
             self.login_frame,
             bg=self.c_surface,
             padx=32,
-            pady=30,
+            pady=26,
             highlightthickness=1,
             highlightbackground=self.c_border
         )
-        card.place(relx=0.5, rely=0.5, anchor=tk.CENTER, width=380, height=360)
+        card.place(relx=0.5, rely=0.5, anchor=tk.CENTER, width=420, height=430)
 
-        lbl_shield = tk.Label(
-            card,
-            text="🔒",
-            font=("Segoe UI", 32),
-            bg=self.c_surface,
-            fg=self.c_silver
-        )
-        lbl_shield.pack(pady=(0, 4))
+        if self.login_logo_img:
+            lbl_logo = tk.Label(
+                card,
+                image=self.login_logo_img,
+                bg=self.c_surface
+            )
+            lbl_logo.pack(pady=(0, 10))
+        else:
+            lbl_shield = tk.Label(
+                card,
+                text="🔒",
+                font=("Segoe UI", 32),
+                bg=self.c_surface,
+                fg=self.c_silver
+            )
+            lbl_shield.pack(pady=(0, 4))
 
         lbl_title = tk.Label(
             card,
@@ -109,7 +195,7 @@ class ServerAdminGUI(tk.Tk):
 
         lbl_sub = tk.Label(
             card,
-            text="Sign in to access server controller & surveillance",
+            text="Sign in to access Nexus FDS server & surveillance",
             font=("Segoe UI", 9),
             bg=self.c_surface,
             fg=self.c_muted
@@ -198,9 +284,13 @@ class ServerAdminGUI(tk.Tk):
         header_frame = tk.Frame(self, bg=self.c_surface, pady=10, padx=16, highlightthickness=1, highlightbackground=self.c_border)
         header_frame.pack(fill=tk.X, side=tk.TOP)
 
+        if self.header_logo_img:
+            lbl_hdr_logo = tk.Label(header_frame, image=self.header_logo_img, bg=self.c_surface)
+            lbl_hdr_logo.pack(side=tk.LEFT, padx=(0, 12))
+
         title_label = tk.Label(
             header_frame,
-            text="Fraud Detection Framework — Server & Surveillance Console",
+            text="Nexus FDS — Fraud Detection & Surveillance Server",
             font=("Segoe UI", 12, "bold"),
             bg=self.c_surface,
             fg=self.c_silver
@@ -448,11 +538,47 @@ class ServerAdminGUI(tk.Tk):
         if getattr(sys, 'frozen', False):
             # Frozen exe: run in-process background thread to serve uvicorn
             import uvicorn
+            import logging
+
+            class QueueLogHandler(logging.Handler):
+                def __init__(self, log_q):
+                    super().__init__()
+                    self.log_q = log_q
+
+                def emit(self, record):
+                    try:
+                        msg = self.format(record)
+                        self.log_q.put(("LOG", msg + "\n"))
+                    except Exception:
+                        pass
+
             def run_uvicorn_in_thread():
                 try:
-                    config = uvicorn.Config("src.main:app", host="127.0.0.1", port=8000, log_level="info")
+                    # Import application app object directly to avoid module path resolution failures
+                    from src.main import app as fastapi_app
+                    
+                    # Create custom logging dictionary using standard logging.Formatter to avoid DefaultFormatter errors
+                    log_handler = QueueLogHandler(self.log_queue)
+                    log_handler.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)s - %(message)s", datefmt="%H:%M:%S"))
+                    
+                    uv_logger = logging.getLogger("uvicorn")
+                    uv_logger.handlers = [log_handler]
+                    uv_logger.setLevel(logging.INFO)
+                    
+                    uv_access = logging.getLogger("uvicorn.access")
+                    uv_access.handlers = [log_handler]
+                    uv_access.setLevel(logging.INFO)
+
+                    config = uvicorn.Config(
+                        fastapi_app,
+                        host="127.0.0.1",
+                        port=8000,
+                        log_level="info",
+                        use_colors=False,
+                        log_config=None
+                    )
                     self.server_instance = uvicorn.Server(config)
-                    self.log_queue.put(("LOG", "[+] Uvicorn server running in embedded mode on http://127.0.0.1:8000!\n"))
+                    self.log_queue.put(("LOG", "[+] Nexus FDS Server online in embedded mode on http://127.0.0.1:8000!\n"))
                     self.server_instance.run()
                 except Exception as ex:
                     self.log_queue.put(("LOG", f"[-] Server error: {str(ex)}\n"))
@@ -460,7 +586,7 @@ class ServerAdminGUI(tk.Tk):
 
             self.server_thread = threading.Thread(target=run_uvicorn_in_thread, daemon=True)
             self.server_thread.start()
-            self._append_formatted_log("[+] Uvicorn server successfully launched on http://127.0.0.1:8000!\n")
+            self._append_formatted_log("[+] Nexus FDS Server successfully launched on http://127.0.0.1:8000!\n")
             return
 
         cmd = [sys.executable, "-m", "uvicorn", "src.main:app", "--host", "127.0.0.1", "--port", "8000", "--log-level", "info"]
@@ -824,33 +950,62 @@ class ServerAdminGUI(tk.Tk):
             "timestamp": timestamp_str
         }
 
-        # Check if server process is running
-        is_server_up = (self.server_process is not None and self.server_process.poll() is None)
-
-        if is_server_up:
-            try:
-                # Fast timeout (1.5s) to avoid any UI freeze
-                res = requests.post(f"{API_BASE}/api/payment/process", json=payload, timeout=1.5)
-                if res.status_code == 200:
-                    d = res.json()
-                    st = d["status"]
-                    tag = "CMD_SUCCESS" if st == "APPROVED" else "CMD_ERR"
-                    msg = f"[>] Status: {st} | TXN ID: {d['transaction_id']} | Risk: {d['risk_score']*100:.1f}%\n"
-                    if st == "APPROVED":
-                        msg += f"    Sender New Balance ({sender_id}): INR {d.get('sender_new_balance', 0):,.2f}\n"
-                    else:
-                        reasons = d.get('reasons', [])
-                        msg += f"    Reasons: {', '.join(reasons)}\n"
-                    self._append_cmd_output(msg, tag)
-                    return
+        # 1. First attempt: Standard HTTP request to running backend (works for both subprocess & embedded)
+        http_success = False
+        try:
+            res = requests.post(f"{API_BASE}/api/payment/process", json=payload, timeout=2.5)
+            if res.status_code == 200:
+                d = res.json()
+                st = d["status"]
+                tag = "CMD_SUCCESS" if st == "APPROVED" else "CMD_ERR"
+                msg = f"[>] Status: {st} | TXN ID: {d['transaction_id']} | Risk: {d['risk_score']*100:.1f}%\n"
+                if st == "APPROVED":
+                    msg += f"    Sender New Balance ({sender_id}): INR {d.get('sender_new_balance', 0):,.2f}\n"
                 else:
-                    self._append_cmd_output(f"Server error ({res.status_code}): {res.text}\n", "CMD_ERR")
-                    return
-            except requests.exceptions.RequestException:
-                # Server process exists but not responding to HTTP yet
-                pass
+                    reasons = d.get('reasons', [])
+                    msg += f"    Reasons: {', '.join(reasons)}\n"
+                self._append_cmd_output(msg, tag)
+                return
+            else:
+                self._append_cmd_output(f"Server error ({res.status_code}): {res.text}\n", "CMD_ERR")
+                return
+        except requests.exceptions.RequestException:
+            http_success = False
 
-        # === SERVER IS STOPPED / OFFLINE ===
+        # 2. Check if the server is running in-process (embedded mode)
+        # If in-process server is active, execute process_payment directly through the scoring engine
+        is_server_active = False
+        if hasattr(self, 'server_instance') and self.server_instance is not None:
+            is_server_active = not getattr(self.server_instance, 'should_exit', False)
+        elif self.server_process is not None and self.server_process.poll() is None:
+            is_server_active = True
+
+        if is_server_active:
+            try:
+                from src.main import process_payment, PaymentRequest
+                p_req = PaymentRequest(
+                    sender_id=sender_id,
+                    receiver_id=receiver_id,
+                    transaction_type="TRANSFER",
+                    amount=p_args.amount,
+                    pin=p_args.pin,
+                    timestamp=timestamp_str
+                )
+                d = process_payment(p_req)
+                st = d.status
+                tag = "CMD_SUCCESS" if st == "APPROVED" else "CMD_ERR"
+                msg = f"[>] Status: {st} | TXN ID: {d.transaction_id} | Risk: {d.risk_score*100:.1f}%\n"
+                if st == "APPROVED":
+                    msg += f"    Sender New Balance ({sender_id}): INR {d.sender_new_balance:,.2f}\n"
+                else:
+                    msg += f"    Reasons: {', '.join(d.reasons)}\n"
+                self._append_cmd_output(msg, tag)
+                return
+            except Exception as e:
+                self._append_cmd_output(f"Processing error: {str(e)}\n", "CMD_ERR")
+                return
+
+        # 3. === SERVER IS STOPPED / OFFLINE ===
         # Return error and register PENDING transaction
         txn_id = f"TXN_{uuid.uuid4().hex[:10].upper()}"
         sender_bal = sender_acc["balance"] if sender_acc else 0.0

@@ -1,0 +1,17 @@
+NEXUS FDS END USER LICENSE & SECURITY AGREEMENT
+
+PLEASE READ THIS AGREEMENT CAREFULLY BEFORE PROCEEDING WITH INSTALLATION.
+
+1. GRANT OF LICENSE
+Nexus FDS grants you a non-exclusive, non-transferable license to use the Smart Fraud Detection Framework (SFDF) and Digital Banking Surveillance Suite for internal fraud prevention, transaction monitoring, and secure administrative operations.
+
+2. SECURITY & COMPLIANCE
+The application monitors digital banking transactions, calculates dynamic risk scores, enforces velocity limits, and records audit logs into a protected local database. By installing, you agree to operate the software in compliance with applicable banking and data protection regulations.
+
+3. ELEVATED PRIVILEGES
+The Nexus FDS Server controller may require administrative privileges to bind to local networking ports (e.g., port 8000), manage background services, and write system transaction audit records.
+
+4. DISCLAIMER OF WARRANTIES
+Nexus FDS is provided "AS IS" without warranty of any kind. In no event shall the authors or copyright holders be liable for any claim, damages, or other liability arising from the use of this software.
+
+By clicking 'Accept' and continuing, you confirm that you have read, understood, and agreed to all terms stated above.

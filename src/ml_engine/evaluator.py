@@ -3,14 +3,43 @@ import joblib
 import pandas as pd
 import numpy as np
 
-MODEL_PATH = os.path.join(os.path.dirname(__file__), "..", "models", "fraud_model.pkl")
+import sys
+
+def _resolve_model_path():
+    # 1. Check relative to current evaluator file (__file__)
+    candidates = [
+        os.path.join(os.path.dirname(__file__), "..", "models", "fraud_model.pkl"),
+        os.path.join(os.path.dirname(__file__), "..", "..", "src", "models", "fraud_model.pkl"),
+    ]
+    # 2. Check relative to sys.executable directory (e.g. D:\New Folder\src\models\fraud_model.pkl)
+    if getattr(sys, "frozen", False):
+        exe_dir = os.path.dirname(sys.executable)
+        candidates.extend([
+            os.path.join(exe_dir, "src", "models", "fraud_model.pkl"),
+            os.path.join(exe_dir, "models", "fraud_model.pkl"),
+            os.path.join(exe_dir, "lib", "src", "models", "fraud_model.pkl"),
+        ])
+    # 3. Check current working directory
+    cwd = os.getcwd()
+    candidates.extend([
+        os.path.join(cwd, "src", "models", "fraud_model.pkl"),
+        os.path.join(cwd, "models", "fraud_model.pkl"),
+    ])
+    for c in candidates:
+        norm = os.path.abspath(c)
+        if os.path.exists(norm):
+            return norm
+    return os.path.abspath(candidates[0])
+
+MODEL_PATH = _resolve_model_path()
 
 class RiskScoringEngine:
     def __init__(self):
-        if not os.path.exists(MODEL_PATH):
-            raise FileNotFoundError(f"Model file not found at {MODEL_PATH}. Run train.py first.")
+        resolved_path = _resolve_model_path()
+        if not os.path.exists(resolved_path):
+            raise FileNotFoundError(f"Model file not found at {resolved_path}. Run train.py first.")
         
-        saved_bundle = joblib.load(MODEL_PATH)
+        saved_bundle = joblib.load(resolved_path)
         self.rf_model = saved_bundle["classifier"]
         self.iso_model = saved_bundle["isolation_forest"]
         self.feature_columns = saved_bundle["feature_columns"]
@@ -32,23 +61,22 @@ class RiskScoringEngine:
         orig_balance_err = (oldbalanceOrg - amount) - newbalanceOrig
         dest_balance_err = (oldbalanceDest + amount) - newbalanceDest
 
-        row = {
-            "type_code": type_code,
-            "amount": amount,
-            "oldbalanceOrg": oldbalanceOrg,
-            "newbalanceOrig": newbalanceOrig,
-            "oldbalanceDest": oldbalanceDest,
-            "newbalanceDest": newbalanceDest,
-            "amount_to_balance_ratio": amount_to_balance_ratio,
-            "balance_drain": balance_drain,
-            "sudden_depletion_flag": sudden_depletion_flag,
-            "orig_balance_err": orig_balance_err,
-            "dest_balance_err": dest_balance_err
+        # Direct vector construction without pandas/pyarrow overhead or missing module errors
+        features_dict = {
+            "type_code": float(type_code),
+            "amount": float(amount),
+            "oldbalanceOrg": float(oldbalanceOrg),
+            "newbalanceOrig": float(newbalanceOrig),
+            "oldbalanceDest": float(oldbalanceDest),
+            "newbalanceDest": float(newbalanceDest),
+            "amount_to_balance_ratio": float(amount_to_balance_ratio),
+            "balance_drain": float(balance_drain),
+            "sudden_depletion_flag": float(sudden_depletion_flag),
+            "orig_balance_err": float(orig_balance_err),
+            "dest_balance_err": float(dest_balance_err)
         }
-
-        df = pd.DataFrame([row])
-        # Reorder columns to match training schema
-        return df[self.feature_columns]
+        vec = [features_dict.get(col, 0.0) for col in self.feature_columns]
+        return np.array([vec], dtype=np.float64)
 
     def evaluate_transaction(self, payload: dict) -> dict:
         """
