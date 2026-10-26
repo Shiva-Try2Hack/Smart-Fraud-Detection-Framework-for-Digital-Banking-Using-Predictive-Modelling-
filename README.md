@@ -20,6 +20,15 @@
 
 <br/>
 
+> [!WARNING]
+> ### ⚠️ EXPERIMENTAL MODEL TESTING & DEMONSTRATION SOFTWARE
+> **This mobile application is built strictly for evaluation, testing, and benchmark demonstration of the Dual-Engine AI Fraud Detection Model.**
+> - It is **NOT** a commercial banking application and does not process real fiat currency.
+> - All balances, transactions, and virtual cards are simulated test assets designed to demonstrate **how accurately the predictive machine learning model catches fraudulent attempts**, flags statistical anomalies, and blocks syndicate mule transfers in real time.
+> - Use this client exclusively in test/staging environments for research, security evaluation, and model validation purposes.
+
+<br/>
+
 ---
 
 ## 📌 1. Project Overview
@@ -150,6 +159,6 @@ The framework includes pre-configured accounts to experience both legitimate ban
 
 ---
 
-## 📄 6. License
-
-This project is licensed under the terms of the [MIT License](LICENSE.txt).
+## 📄 6. License & Testing Disclaimer
+- **License**: This project is licensed under the terms of the [MIT License](LICENSE.txt).
+- **Disclaimer**: Provided strictly "as-is" for educational, academic, and artificial intelligence predictive testing purposes. No liability is assumed for unauthorized use or misinterpretation of financial risk scoring predictions.
