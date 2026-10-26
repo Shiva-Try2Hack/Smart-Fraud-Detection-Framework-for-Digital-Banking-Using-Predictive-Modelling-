@@ -280,31 +280,27 @@ curl -X POST http://127.0.0.1:8000/api/payment/process \
 
 ---
 
-## 👥 5. Pre-Configured Test Accounts
+## 👥 5. Live Testing & Simulation Accounts
 
-The cloud-hosted testing gateway also includes pre-configured demo accounts for instant mobile app testing:
+Users can tap **"Register Now"** directly on the mobile app home screen to create an account, or create an account via the local CLI:
 
-### 🎓 Legitimate User Accounts
-| Full Name | Login Identifier | Personal UPI ID |
-| :--- | :--- | :--- |
-| **Shiva** | `shiva@nexuspay.com` | `shiva@okaxis` |
-| **Prasad Kadu** | `prasad@nexuspay.com` | `prasad@oksbi` |
-| **Sayali Dahake** | `sayali@nexuspay.com` | `sayali@okhdfc` |
-| **Minal Thakare** | `minal@nexuspay.com` | `minal@okicici` |
-| **Prathamesh Meshram** | `prathamesh@nexuspay.com` | `prathamesh@okpaytm` |
-
-*Users can also tap **"Register Now"** inside the app to create and test their own account with custom credentials.*
+```bash
+# Create a test account instantly
+python server_quickstart/local_manager.py create -u demo_user -n "Demo Tester" --upi demo@testbank -p 1234 -b 50000
+```
 
 ### ⚠️ Simulated Blacklisted Syndicate & Mule Accounts
+Attempting transfers to these flagged addresses tests the real-time interception pipeline:
 | Entity / Flagged Name | Flagged UPI ID | Threat Classification | Interception Outcome |
 | :--- | :--- | :--- | :--- |
 | **Dark Mule Node 01** | `evil.darkmule@darkpay` | Blacklisted Mule Node | **BLOCKED (Blacklist Rule)** |
 | **Syndicate Phisher X** | `evil.phisher@shadowbank` | Phishing Syndicate Node | **BLOCKED (Blacklist Rule)** |
 | **Launderer Ghost Hub** | `evil.launderer@ghostupi` | Money Laundering Target | **BLOCKED (Blacklist Rule)** |
 
-### 🧪 Fraud Scenarios to Test:
-1. **Sudden Account Depletion**: Log in as `sayali` (Balance: ₹ 45,000) and try to transfer `₹ 44,999` in a single payment. The contextual engine and Random Forest classifier flag the sudden 99.9% liquidity drain and block the attempt.
-2. **Normal Retail Transfer**: Transfer ₹ 500 from `shiva` to `prasad`. The transaction is approved in under 15ms and balances update immediately.
+### 🧪 Key Fraud Scenarios to Test:
+1. **Critical Liquidity Drain**: Attempt to transfer >95% of an account's total available balance in a single payment (e.g. ₹ 49,000 from a ₹ 50,000 balance). The contextual behavioral engine and Random Forest classifier flag the sudden liquidity drain and intercept the transfer.
+2. **Blacklisted Recipient**: Send funds to any of the evil addresses above (`evil.darkmule@darkpay`). The heuristic filter immediately blocks the transaction.
+3. **Normal Retail Transfer**: Sending standard everyday amounts (e.g. ₹ 200 - ₹ 1,000) evaluates safely and receives immediate `APPROVED` status in under 15ms.
 
 <br/>
 
