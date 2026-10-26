@@ -14,7 +14,7 @@
 
 **Production-grade Android mobile banking client with pre-trained AI predictive models for testing real-time transaction surveillance.**
 
-[📥 **Download Latest Android APK (.apk)**](https://github.com/Shiva-Try2Hack/Smart-Fraud-Detection-Framework-for-Digital-Banking-Using-Predictive-Modelling-/releases) | [📋 **View Changelog**](CHANGELOG.md)
+[📥 **Download Latest Android APK (.apk)**](https://github.com/Shiva-Try2Hack/Smart-Fraud-Detection-Framework-for-Digital-Banking-Using-Predictive-Modelling-/releases) &nbsp;•&nbsp; [📋 **View Changelog**](CHANGELOG.md)
 
 </div>
 
@@ -150,16 +150,6 @@ The framework includes pre-configured accounts to experience both legitimate ban
 
 ---
 
-## ⚙️ 6. Automated GitHub CI/CD Pipeline
-
-This repository includes a native GitHub Actions workflow in [`.github/workflows/build_android_apk.yml`](.github/workflows/build_android_apk.yml):
-- **Continuous Integration**: Builds and tests the Android app on every push to `main` and on pull requests.
-- **Automated Releases**: Automatically generates and attaches the compiled `app-debug.apk` whenever a new semantic version tag (e.g. `v2.4.0`) is pushed to the repository.
-
-<br/>
-
----
-
-## 📄 7. License
+## 📄 6. License
 
 This project is licensed under the terms of the [MIT License](LICENSE.txt).
