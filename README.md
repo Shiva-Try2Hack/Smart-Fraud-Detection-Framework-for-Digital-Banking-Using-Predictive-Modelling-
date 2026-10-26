@@ -208,9 +208,81 @@ print(verdict)
 
 ---
 
-## 👥 4. Pre-Configured Test Accounts
+## 🖥️ 4. Host Your Own Local Server & CLI Commands (Fresh Setup)
 
-The framework includes pre-configured accounts to experience both legitimate banking transactions and live fraud interceptions:
+For researchers, students, and developers who wish to host their own private instance of the fraud scoring server locally, a fresh boilerplate engine is provided in [`server_quickstart/`](server_quickstart/). It initializes an empty SQLite database without any pre-existing personal data or credentials.
+
+### ⚡ 1. Quickstart: Launch the Local API Server
+```bash
+# 1. Install dependencies
+pip install -r server_quickstart/requirements.txt
+
+# 2. Run the local fraud scoring server
+python server_quickstart/run_local_server.py
+```
+- **Local Endpoint**: `http://127.0.0.1:8000`
+- **Interactive Swagger Docs**: `http://127.0.0.1:8000/docs`
+
+---
+
+### 🛠️ 2. Account & Balance Management CLI Commands
+
+Manage accounts, add money, change PINs, and inspect balances directly from your terminal using `server_quickstart/local_manager.py`:
+
+#### 👤 Account Creation
+```bash
+# Create a new legitimate user (Default balance: ₹ 10,000 | PIN: 1234)
+python server_quickstart/local_manager.py create -u rahul -n "Rahul Sharma" --upi rahul@testbank -p 1234 -b 25000
+
+# Create a blacklisted syndicate mule account to test fraud blocking
+python server_quickstart/local_manager.py create -u evil_bot -n "Evil Mule Node" --upi evil.mule@darkbank -p 0000 -b 0 --evil
+```
+
+#### 💰 Balance Operations
+```bash
+# Check balance of any account
+python server_quickstart/local_manager.py balance -u rahul
+python server_quickstart/local_manager.py balance -u rahul@testbank
+
+# Deposit / Add money to an account
+python server_quickstart/local_manager.py add-balance -u rahul -a 5000
+
+# Deduct / Withdraw money from an account
+python server_quickstart/local_manager.py deduct-balance -u rahul -a 2000
+```
+
+#### 🔐 Security & Administration
+```bash
+# Change account UPI PIN
+python server_quickstart/local_manager.py set-pin -u rahul -p 9988
+
+# List all accounts in your local database
+python server_quickstart/local_manager.py list
+
+# Delete an account
+python server_quickstart/local_manager.py delete -u rahul
+```
+
+#### 💳 Simulate Payments via Terminal (Curl / HTTP)
+```bash
+# Test an approved retail payment
+curl -X POST http://127.0.0.1:8000/api/payment/process \
+  -H "Content-Type: application/json" \
+  -d '{"sender_id": "rahul", "receiver_id": "amit@testbank", "amount": 500.0, "pin": "9988"}'
+
+# Test a critical balance drain fraud attempt (blocked by ML model)
+curl -X POST http://127.0.0.1:8000/api/payment/process \
+  -H "Content-Type: application/json" \
+  -d '{"sender_id": "rahul", "receiver_id": "amit@testbank", "amount": 27900.0, "pin": "9988"}'
+```
+
+<br/>
+
+---
+
+## 👥 5. Pre-Configured Test Accounts
+
+The cloud-hosted testing gateway also includes pre-configured demo accounts for instant mobile app testing:
 
 ### 🎓 Legitimate User Accounts
 | Full Name | Login Identifier | Personal UPI ID |
@@ -238,7 +310,7 @@ The framework includes pre-configured accounts to experience both legitimate ban
 
 ---
 
-## 🚀 5. How to Get & Run the App
+## 🚀 6. How to Get & Run the App
 
 ### Option A: Install Pre-Built APK (Fastest)
 1. Head over to the [GitHub Releases](https://github.com/Shiva-Try2Hack/Smart-Fraud-Detection-Framework-for-Digital-Banking-Using-Predictive-Modelling-/releases) page.
@@ -260,6 +332,6 @@ The framework includes pre-configured accounts to experience both legitimate ban
 
 ---
 
-## 📄 6. License & Testing Disclaimer
+## 📄 7. License & Testing Disclaimer
 - **License**: This project is licensed under the terms of the [MIT License](LICENSE.txt).
 - **Disclaimer**: Provided strictly "as-is" for educational, academic, and artificial intelligence predictive testing purposes. No liability is assumed for unauthorized use or misinterpretation of financial risk scoring predictions.
