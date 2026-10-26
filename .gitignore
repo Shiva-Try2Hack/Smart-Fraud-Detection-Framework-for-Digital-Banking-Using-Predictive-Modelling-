@@ -5,11 +5,43 @@ __pycache__/
 *.so
 .pytest_cache/
 
-# Environments
+# Environments & sensitive keys
 venv/
 env/
 ENV/
 .env
+*.env
+*.key
+*.pem
+*.jks
+*.keystore
+debug.keystore
+
+# Internal Server Runner scripts & binaries (Private / Host-side only)
+cloudflared.exe
+server_endpoint.txt
+start_nexus_247_server.bat
+run_server.py
+server_ui.py
+admin_monitor.py
+setup_msi.py
+manage_users.py
+uninstall.bat
+*.sqlite
+*.sqlite3
+*.db
+database.sqlite
+
+# Android build outputs & local system configs
+.gradle/
+.kotlin/
+local.properties
+app/**/build/
+app/**/.gradle/
+app/**/.kotlin/
+app/**/local.properties
+app/**/debug.keystore
+*.hprof
 
 # IDE and Editor configs
 .vscode/

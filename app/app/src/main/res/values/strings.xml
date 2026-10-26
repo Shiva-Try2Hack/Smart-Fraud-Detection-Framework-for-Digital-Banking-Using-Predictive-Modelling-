@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">NEXUS PAY</string>
+    <string name="search_hint">Pay friends and merchants</string>
+    <string name="connected_to_bank_server">Connected to Bank Server</string>
+    <string name="server_offline">Offline — Tap to configure server</string>
+    <string name="scan_any_qr">Scan any\nQR code</string>
+    <string name="pay_contacts">Pay\ncontacts</string>
+    <string name="bank_transfer">Bank\ntransfer</string>
+    <string name="pay_bills">Pay bills &amp;\nrecharges</string>
+    <string name="tap_and_pay">Tap &amp; Pay</string>
+    <string name="activate_upi_lite">Activate UPI Lite</string>
+    <string name="check_bank_balance">Check bank balance</string>
+    <string name="see_transaction_history">See transaction history</string>
+    <string name="people_section_title">People</string>
+    <string name="businesses_section_title">Businesses</string>
+    <string name="explore_more">Explore</string>
+</resources>

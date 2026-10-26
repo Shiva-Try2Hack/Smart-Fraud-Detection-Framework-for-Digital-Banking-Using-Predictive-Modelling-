@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<host-apdu-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/tap_and_pay"
+    android:requireDeviceUnlock="true">
+    <aid-group
+        android:category="payment"
+        android:description="@string/tap_and_pay">
+        <!-- Visa Proximity Payment System Environment (PPSE) & PayWave AIDs -->
+        <aid-filter android:name="325041592E5359532E4444463031" />
+        <aid-filter android:name="A0000000031010" />
+        <!-- Mastercard PayPass AID -->
+        <aid-filter android:name="A0000000041010" />
+        <!-- RuPay Contactless AID -->
+        <aid-filter android:name="A0000005241010" />
+    </aid-group>
+</host-apdu-service>

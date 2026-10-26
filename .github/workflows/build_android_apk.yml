@@ -1,0 +1,68 @@
+name: Build Nexus Pay Android APK & Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-apk:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Grant Execute Permission to Gradlew
+        run: chmod +x ./app/gradlew
+
+      - name: Build Debug APK
+        working-directory: ./app
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Upload Debug APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nexus-pay-app-debug
+          path: app/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: app/app/build/outputs/apk/debug/app-debug.apk
+          name: Nexus Pay Mobile App ${{ github.ref_name }}
+          body: |
+            ## 📱 Nexus Pay Mobile Client (Real-Time AI Fraud Prevention)
+            
+            Welcome to the official release of **Nexus Pay Mobile Client**!
+            
+            ### ✨ What's Included:
+            - **Live Fraud Prevention Engine**: Seamlessly evaluates transactions against our Dual-Engine ML model (Random Forest & Isolation Forest) in under 15ms.
+            - **Tactile PIN Pad & Biometric Security**: Safeguarded balance inspection and multi-layered transfer authentication.
+            - **Interactive 3D EMV Card**: 3D flip card dynamics with front & back inspection, CVV security, and NFC token preparation.
+            - **Pre-Configured Student & Syndicate Accounts**: Easily test legitimate transactions or verify how malicious mule accounts and sudden drain velocities get intercepted!
+            
+            ### 📥 Installation:
+            1. Download `app-debug.apk` attached below.
+            2. Install on any Android device running Android 7.0+ (API 24+).
+            3. Enjoy high-speed, AI-guarded digital payments!
+          draft: false
+          prerelease: false
