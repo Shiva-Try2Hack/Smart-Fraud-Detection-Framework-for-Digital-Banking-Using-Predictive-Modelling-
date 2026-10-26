@@ -47,13 +47,25 @@ Modern digital banking requires high security against push payment scams, sudden
 
 ---
 
-## ✨ 2. Mobile Features
+## ✨ 2. Mobile App Features & Capabilities
 
-- **Liquid Glass Aesthetics**: Modern frosted glass surfaces, OLED Midnight and Crisp Light themes, and smooth micro-animations.
-- **Interactive 3D Virtual EMV Card**: Tap the card for a smooth 3D flip animation displaying the 16-digit embossed number, cardholder name, chip, magnetic stripe, and hidden CVV.
-- **Tactile Security Gate**: Balance is masked by default (`••••••••`). Checking balances or confirming payments triggers a tactile numeric keypad verified by the security engine.
-- **Contactless NFC & QR Scanner**: Hardware NFC detection for tap-to-pay token preparation alongside ML Kit powered CameraX QR code scanning.
-- **Live Fraud Alerts**: Instant feedback detailing why a transaction was approved or why it was intercepted by the AI model.
+### 🛡️ Fraud Interception & Security
+- **Real-Time AI Risk Scoring**: Payments pass through our dual-engine predictive ML models in under 15 milliseconds, displaying immediate risk scores (`APPROVED`, `FLAGGED`, `BLOCKED`) with human-readable reason codes.
+- **Sudden Velocity & Drain Detection**: Flags abnormal balance-depleting transfers (>95% total liquidity drain) and blocks known syndicate mule accounts before funds settle.
+- **Privacy Balance Shield**: Account balance remains masked by default (`••••••••`) to protect against shoulder-surfing. Tapping reveals a tactile numeric keypad requiring secure PIN or biometric matching.
+- **Biometric App Lock**: Fingerprint and face unlock integration (`BiometricPrompt`) to guard transaction approvals and settings.
+
+### 💳 Digital Banking & Payment Methods
+- **Interactive 3D Virtual EMV Card**: 3D animated debit card with realistic lighting physics (`graphicsLayer(rotationY)`). Displays 16-digit card number, holder name, chip, and a tap-to-reveal CVV code.
+- **Contactless NFC Tap-to-Pay**: Automatic hardware NFC detection with Host Card Emulation (HCE) token preparation for contactless point-of-sale terminals.
+- **Integrated CameraX QR Code Scanner**: ML Kit-powered high-speed QR scanner for instant UPI and merchant barcode parsing.
+- **Direct UPI & Bank Transfers**: Multi-mode payment support for UPI IDs, direct account + IFSC transfers, contacts, and utility bill mock settlements.
+
+### 🎨 Modern UI & UX Experience
+- **Liquid Glass Aesthetics**: Apple-style frosted blur layers, subtle gradient reflections, and tactile haptic feedback on keypresses.
+- **OLED Dark & Crisp Light Themes**: Dynamic theme switching tailored for low-light banking and battery saving on OLED displays.
+- **Detailed Transaction Ledger**: Full ledger with real-time audit trails, timestamped receipts, transaction IDs, and status badges.
+- **Zero-Config Cloud Connectivity**: Automatic connection to the cloud scoring gateway with auto-fallback to local gateway diagnostics for offline testing.
 
 <br/>
 
