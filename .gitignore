@@ -17,7 +17,7 @@ ENV/
 *.keystore
 debug.keystore
 
-# Internal Server Runner scripts & binaries (Private / Host-side only)
+# Internal Server Runner scripts, databases & binaries (Host-side only)
 cloudflared.exe
 server_endpoint.txt
 start_nexus_247_server.bat
@@ -31,6 +31,14 @@ uninstall.bat
 *.sqlite3
 *.db
 database.sqlite
+src/db/
+src/main.py
+test_api.py
+docs/
+assets/
+build/
+dist/
+*.egg-info/
 
 # Android build outputs & local system configs
 .gradle/
@@ -53,8 +61,3 @@ app/**/debug.keystore
 Thumbs.db
 Desktop.ini
 .DS_Store
-
-# Build & Installer Artifacts
-build/
-dist/
-*.egg-info/
