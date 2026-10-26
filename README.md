@@ -110,10 +110,99 @@ Modern digital banking requires high security against push payment scams, sudden
    └───────────────────────────────────────────────────────────────┘
 ```
 
-### Pre-Trained Model Bundle (`src/models/fraud_model.pkl`)
-- `classifier`: Tuned Random Forest model scoring probability of deliberate transaction fraud.
-- `isolation_forest`: Unsupervised detector flagging statistically anomalous behavioral deviations.
-- `feature_columns`: Canonical feature schema ensuring zero drift and strict deterministic inference.
+### 📦 Model Bundle Architecture (`src/models/fraud_model.pkl`)
+
+The model bundle is serialized via `joblib` and contains a complete dictionary artifact:
+```python
+{
+    "classifier": RandomForestClassifier,   # Supervised fraud probability engine
+    "isolation_forest": IsolationForest,    # Unsupervised zero-day outlier detector
+    "feature_columns": [...]                # 11-dimensional canonical feature schema
+}
+```
+
+#### 1. Supervised Random Forest Classifier
+- **Objective**: Evaluates non-linear correlations and patterns indicative of fraudulent fund siphon maneuvers (derived from extensive PaySim financial transaction distributions).
+- **Output**: Returns a calibrated probability score (`0.0` to `1.0`). Any transaction yielding `rf_prob >= 0.70` is classified as critical fraud risk.
+
+#### 2. Unsupervised Isolation Forest
+- **Objective**: Identifies novel, zero-day anomalous behaviors that do not fit regular spending baselines.
+- **Output**: Decision function outputs `+1` (normal transaction profile) or `-1` (statistical outlier). Outlier status dynamically triggers step-up verification or block rules.
+
+#### 3. 11-Dimensional Feature Vector Schema
+The model evaluates transactions using direct numerical vectors, bypassing complex overheads:
+| Feature Name | Type | Description |
+| :--- | :---: | :--- |
+| `type_code` | `float` | Transaction type: `PAYMENT (0)`, `TRANSFER (1)`, `CASH_OUT (2)`, `CASH_IN (3)`, `DEBIT (4)` |
+| `amount` | `float` | Requested transaction amount in INR |
+| `oldbalanceOrg` | `float` | Sender's current balance before transfer |
+| `newbalanceOrig` | `float` | Sender's projected balance after transfer |
+| `oldbalanceDest` | `float` | Recipient's initial balance before credit |
+| `newbalanceDest` | `float` | Recipient's projected balance after credit |
+| `amount_to_balance_ratio` | `float` | Relative impact: `amount / (oldbalanceOrg + 1.0)` |
+| `balance_drain` | `float` | Velocity of balance loss: `(oldbalanceOrg - newbalanceOrig) / (oldbalanceOrg + 1.0)` |
+| `sudden_depletion_flag` | `float` | Binary flag `1.0` if old balance > ₹ 1,000 and post-balance drops to ≤ ₹ 10 |
+| `orig_balance_err` | `float` | Accounting integrity: `(oldbalanceOrg - amount) - newbalanceOrig` |
+| `dest_balance_err` | `float` | Accounting integrity: `(oldbalanceDest + amount) - newbalanceDest` |
+
+---
+
+### 💻 How to Load & Use the Model in Python
+
+You can load and query the model directly in your own scripts or backend services without needing any server:
+
+```python
+import joblib
+import numpy as np
+
+# 1. Load the pre-trained model bundle
+bundle = joblib.load("src/models/fraud_model.pkl")
+rf_model = bundle["classifier"]
+iso_forest = bundle["isolation_forest"]
+feature_cols = bundle["feature_columns"]
+
+# 2. Define a test transaction (e.g. sudden drain attempt)
+test_features = {
+    "type_code": 1.0,                   # TRANSFER
+    "amount": 49000.0,                  # Large transfer
+    "oldbalanceOrg": 50000.0,           # Sender balance: 50,000
+    "newbalanceOrig": 1000.0,           # Post balance: 1,000 (98% drain)
+    "oldbalanceDest": 1200.0,
+    "newbalanceDest": 50200.0,
+    "amount_to_balance_ratio": 49000.0 / 50001.0, # 0.979
+    "balance_drain": 49000.0 / 50001.0,           # 0.979
+    "sudden_depletion_flag": 0.0,
+    "orig_balance_err": 0.0,
+    "dest_balance_err": 0.0
+}
+
+# 3. Format input vector according to canonical schema
+vector = np.array([[test_features[col] for col in feature_cols]], dtype=np.float64)
+
+# 4. Predict fraud probability and outlier status
+fraud_probability = rf_model.predict_proba(vector)[0][1]
+is_anomaly = iso_forest.predict(vector)[0] == -1
+
+print(f"Fraud Probability : {fraud_probability * 100:.2f}%")
+print(f"Zero-Day Anomaly   : {'YES (Outlier)' if is_anomaly else 'NO'}")
+# Output:
+# Fraud Probability : 89.40% -> [ BLOCKED ]
+```
+
+You can also run our standalone evaluator engine:
+```python
+from src.ml_engine.evaluator import RiskScoringEngine
+
+engine = RiskScoringEngine()
+verdict = engine.evaluate_transaction({
+    "transaction_type": "TRANSFER",
+    "amount": 44999.0,
+    "sender_current_balance": 45000.0,
+    "receiver_current_balance": 1500.0
+})
+print(verdict)
+# Returns: {'status': 'BLOCKED', 'risk_score': 0.95, 'reasons': ['Critical Account Depletion: Over 95% of total balance...']}
+```
 
 <br/>
 
