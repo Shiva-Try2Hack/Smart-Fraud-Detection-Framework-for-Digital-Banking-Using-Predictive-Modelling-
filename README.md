@@ -103,15 +103,15 @@ Modern digital banking requires high security against push payment scams, sudden
 The framework includes pre-configured accounts to experience both legitimate banking transactions and live fraud interceptions:
 
 ### 🎓 Legitimate User Accounts
-| Full Name | Login Email | Password | Personal UPI ID | Bank PIN | Initial Balance |
-| :--- | :--- | :--- | :--- | :---: | :--- |
-| **Shiva** | `shiva@nexuspay.com` | `shiva123` | `shiva@okaxis` | `1234` | ₹ 80,000.00 |
-| **Prasad Kadu** | `prasad@nexuspay.com` | `prasad123` | `prasad@oksbi` | `1122` | ₹ 60,000.00 |
-| **Sayali Dahake** | `sayali@nexuspay.com` | `sayali123` | `sayali@okhdfc` | `2233` | ₹ 45,000.00 |
-| **Minal Thakare** | `minal@nexuspay.com` | `minal123` | `minal@okicici` | `3344` | ₹ 50,000.00 |
-| **Prathamesh Meshram** | `prathamesh@nexuspay.com` | `prathamesh123` | `prathamesh@okpaytm` | `4455` | ₹ 55,000.00 |
+| Full Name | Login Identifier | Personal UPI ID |
+| :--- | :--- | :--- |
+| **Shiva** | `shiva@nexuspay.com` | `shiva@okaxis` |
+| **Prasad Kadu** | `prasad@nexuspay.com` | `prasad@oksbi` |
+| **Sayali Dahake** | `sayali@nexuspay.com` | `sayali@okhdfc` |
+| **Minal Thakare** | `minal@nexuspay.com` | `minal@okicici` |
+| **Prathamesh Meshram** | `prathamesh@nexuspay.com` | `prathamesh@okpaytm` |
 
-*You can also tap **"Register Now"** inside the app to register a custom account.*
+*Users can also tap **"Register Now"** inside the app to create and test their own account with custom credentials.*
 
 ### ⚠️ Simulated Blacklisted Syndicate & Mule Accounts
 | Entity / Flagged Name | Flagged UPI ID | Threat Classification | Interception Outcome |
