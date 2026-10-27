@@ -78,7 +78,10 @@ def process_payment(payload: PaymentRequest):
 
     # 1. PIN Check
     if sender_acc and payload.pin is not None:
+        sender_acc_id = str(sender_acc.get("upi_id") or sender_acc.get("username") or payload.sender_id)
         if str(sender_acc["pin"]).strip() != str(payload.pin).strip():
+            from server_quickstart.local_manager import record_pin_attempt
+            record_pin_attempt(sender_acc_id, success=False)
             return PaymentResponse(
                 transaction_id=txn_id,
                 sender_id=payload.sender_id,
@@ -92,6 +95,9 @@ def process_payment(payload: PaymentRequest):
                 reasons=["Security Check Failed: Incorrect bank PIN"],
                 sender_new_balance=sender_bal
             )
+        else:
+            from server_quickstart.local_manager import record_pin_attempt
+            record_pin_attempt(sender_acc_id, success=True)
 
     # 2. Blacklist / Syndicate Check
     if receiver_acc and receiver_acc.get("is_evil", 0) == 1:
@@ -109,12 +115,29 @@ def process_payment(payload: PaymentRequest):
             sender_new_balance=sender_bal
         )
 
-    # 3. Model Evaluation
+    # 3. Model Evaluation with Behavioral Context
+    from server_quickstart.local_manager import get_connection
+    from src.features.user_features import get_user_behavior_features_db
+
+    conn = get_connection()
+    try:
+        user_behavior = get_user_behavior_features_db(
+            conn=conn,
+            sender_id=sender_acc["upi_id"] if sender_acc else payload.sender_id,
+            receiver_id=receiver_acc["upi_id"] if receiver_acc else payload.receiver_id,
+            amount=payload.amount
+        )
+    except Exception:
+        user_behavior = {}
+    finally:
+        conn.close()
+
     eval_payload = {
         "transaction_type": payload.transaction_type,
         "amount": payload.amount,
         "sender_current_balance": sender_bal,
-        "receiver_current_balance": receiver_bal
+        "receiver_current_balance": receiver_bal,
+        "user_behavior": user_behavior
     }
     eval_result = evaluator.evaluate_transaction(eval_payload)
 

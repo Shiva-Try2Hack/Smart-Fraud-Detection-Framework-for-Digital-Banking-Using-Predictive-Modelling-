@@ -1,0 +1,252 @@
+{
+  "metadata": {
+    "execution_time": "2026-10-27T18:43:43.593596",
+    "git_commit": "5dd14dc572caaea0b5fb1cc15a6ff52b0a7330f2",
+    "schema_version": "2.0.0",
+    "dataset_rows": 182030
+  },
+  "comparison_metrics": {
+    "phase1": {
+      "model_name": "Phase 1 Model (No User Behavior)",
+      "roc_auc": 0.983,
+      "pr_auc": 0.0543,
+      "brier_score": 0.0154,
+      "blocked_metrics": {
+        "threshold": 0.75,
+        "precision": 0.0275,
+        "recall": 0.3235,
+        "f1": 0.0507,
+        "confusion_matrix": [
+          [
+            26882,
+            389
+          ],
+          [
+            23,
+            11
+          ]
+        ]
+      },
+      "flagged_metrics": {
+        "threshold": 0.4,
+        "precision": 0.0348,
+        "recall": 0.6176,
+        "f1": 0.0659,
+        "confusion_matrix": [
+          [
+            26689,
+            582
+          ],
+          [
+            13,
+            21
+          ]
+        ]
+      },
+      "recall_at_fixed_fpr": {
+        "recall_at_fpr_1_pct": 0.1471,
+        "recall_at_fpr_0.1_pct": 0.0882,
+        "recall_at_fpr_0.01_pct": 0.0588
+      },
+      "precision_at_top_k": {
+        "precision_at_100": 0.04,
+        "precision_at_500": 0.024,
+        "precision_at_1000": 0.034
+      },
+      "monetary": {
+        "total_fraud_inr": 695942.3,
+        "blocked_fraud_inr": 374378.88999999996,
+        "missed_fraud_inr": 321563.4100000001,
+        "intercepted_or_flagged_inr": 528352.04,
+        "money_catch_rate": 0.5379
+      }
+    },
+    "phase2": {
+      "model_name": "Phase 2 Model (With User Behavior & Velocity)",
+      "roc_auc": 1.0,
+      "pr_auc": 0.9857,
+      "brier_score": 0.0001,
+      "blocked_metrics": {
+        "threshold": 0.75,
+        "precision": 0.9444,
+        "recall": 1.0,
+        "f1": 0.9714,
+        "confusion_matrix": [
+          [
+            27269,
+            2
+          ],
+          [
+            0,
+            34
+          ]
+        ]
+      },
+      "flagged_metrics": {
+        "threshold": 0.4,
+        "precision": 0.9444,
+        "recall": 1.0,
+        "f1": 0.9714,
+        "confusion_matrix": [
+          [
+            27269,
+            2
+          ],
+          [
+            0,
+            34
+          ]
+        ]
+      },
+      "recall_at_fixed_fpr": {
+        "recall_at_fpr_1_pct": 1.0,
+        "recall_at_fpr_0.1_pct": 1.0,
+        "recall_at_fpr_0.01_pct": 1.0
+      },
+      "precision_at_top_k": {
+        "precision_at_100": 0.34,
+        "precision_at_500": 0.068,
+        "precision_at_1000": 0.034
+      },
+      "monetary": {
+        "total_fraud_inr": 695942.3,
+        "blocked_fraud_inr": 695942.3,
+        "missed_fraud_inr": 0.0,
+        "intercepted_or_flagged_inr": 695942.3,
+        "money_catch_rate": 1.0
+      }
+    }
+  },
+  "scenario_breakdown": [
+    {
+      "scenario": "SPLIT_DRAIN",
+      "test_count": 28,
+      "phase1_recall": 0.25,
+      "phase2_recall": 1.0,
+      "improvement": 0.75
+    },
+    {
+      "scenario": "ACCOUNT_TAKEOVER",
+      "test_count": 6,
+      "phase1_recall": 0.6667,
+      "phase2_recall": 1.0,
+      "improvement": 0.3333
+    }
+  ],
+  "hard_negatives": [
+    {
+      "scenario": "HARD_NEGATIVE_FIRST_TIME_LARGE_GIFT",
+      "test_count": 13,
+      "phase1_false_positive_rate": 0.8462,
+      "phase2_false_positive_rate": 0.0769
+    },
+    {
+      "scenario": "LEGIT_STANDARD",
+      "test_count": 27258,
+      "phase1_false_positive_rate": 0.0139,
+      "phase2_false_positive_rate": 0.0
+    }
+  ],
+  "top_features": [
+    {
+      "feature": "days_since_first_payment_to_payee",
+      "importance_pct": 17.47
+    },
+    {
+      "feature": "amount",
+      "importance_pct": 16.62
+    },
+    {
+      "feature": "receiver_account_age_days",
+      "importance_pct": 15.98
+    },
+    {
+      "feature": "amount_to_balance_ratio",
+      "importance_pct": 12.57
+    },
+    {
+      "feature": "amount_zscore",
+      "importance_pct": 9.1
+    },
+    {
+      "feature": "amount_percentile_for_user",
+      "importance_pct": 5.58
+    },
+    {
+      "feature": "receiver_distinct_senders_24h",
+      "importance_pct": 4.8
+    },
+    {
+      "feature": "oldbalanceDest",
+      "importance_pct": 4.75
+    },
+    {
+      "feature": "type_code",
+      "importance_pct": 4.71
+    },
+    {
+      "feature": "txn_count_30d",
+      "importance_pct": 2.0
+    },
+    {
+      "feature": "std_amount_30d",
+      "importance_pct": 0.81
+    },
+    {
+      "feature": "amount_sum_1h",
+      "importance_pct": 0.8
+    },
+    {
+      "feature": "txn_count_1h",
+      "importance_pct": 0.79
+    },
+    {
+      "feature": "max_amount_30d",
+      "importance_pct": 0.71
+    },
+    {
+      "feature": "amount_sum_24h",
+      "importance_pct": 0.62
+    },
+    {
+      "feature": "avg_amount_30d",
+      "importance_pct": 0.58
+    },
+    {
+      "feature": "payee_txn_count",
+      "importance_pct": 0.41
+    },
+    {
+      "feature": "failed_pin_attempts_last_15min",
+      "importance_pct": 0.38
+    },
+    {
+      "feature": "is_new_payee",
+      "importance_pct": 0.36
+    },
+    {
+      "feature": "oldbalanceOrg",
+      "importance_pct": 0.27
+    },
+    {
+      "feature": "hour_deviation",
+      "importance_pct": 0.26
+    },
+    {
+      "feature": "cold_start",
+      "importance_pct": 0.22
+    },
+    {
+      "feature": "txn_count_24h",
+      "importance_pct": 0.14
+    },
+    {
+      "feature": "usual_hour_of_day",
+      "importance_pct": 0.07
+    },
+    {
+      "feature": "txn_count_1min",
+      "importance_pct": 0.0
+    }
+  ]
+}

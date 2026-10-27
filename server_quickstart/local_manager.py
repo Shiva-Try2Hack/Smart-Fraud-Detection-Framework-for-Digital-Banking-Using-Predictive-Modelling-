@@ -44,6 +44,33 @@ def init_db():
         timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
     """)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS transaction_history (
+        id TEXT PRIMARY KEY,
+        sender_id TEXT NOT NULL,
+        receiver_id TEXT NOT NULL,
+        amount REAL NOT NULL,
+        type TEXT NOT NULL,
+        timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        device_id TEXT,
+        decision TEXT NOT NULL,
+        risk_score REAL NOT NULL,
+        model_version TEXT NOT NULL,
+        was_confirmed_fraud INTEGER DEFAULT NULL
+    )
+    """)
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_txn_hist_sender_time ON transaction_history (sender_id, timestamp)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_txn_hist_receiver_time ON transaction_history (receiver_id, timestamp)")
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS pin_attempts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        account_id TEXT NOT NULL,
+        success INTEGER NOT NULL,
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_pin_attempts_acc_time ON pin_attempts (account_id, timestamp)")
     conn.commit()
     conn.close()
 
@@ -123,6 +150,16 @@ def delete_account(identifier: str) -> bool:
     conn.close()
     return True
 
+def record_pin_attempt(account_id: str, success: bool):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+    INSERT INTO pin_attempts (account_id, success)
+    VALUES (?, ?)
+    """, (account_id, 1 if success else 0))
+    conn.commit()
+    conn.close()
+
 def record_transaction(log_data: dict):
     conn = get_connection()
     cursor = conn.cursor()
@@ -143,6 +180,23 @@ def record_transaction(log_data: dict):
         log_data["supervised_ml_prob"],
         1 if log_data["anomaly_detected"] else 0,
         json.dumps(log_data.get("reasons", []))
+    ))
+    # Also write to transaction_history
+    cursor.execute("""
+    INSERT INTO transaction_history (id, sender_id, receiver_id, amount, type, timestamp, device_id, decision, risk_score, model_version, was_confirmed_fraud)
+    VALUES (?, ?, ?, ?, ?, COALESCE(?, CURRENT_TIMESTAMP), ?, ?, ?, ?, ?)
+    """, (
+        log_data["id"],
+        log_data["sender_id"],
+        log_data["receiver_id"],
+        log_data["amount"],
+        log_data["transaction_type"],
+        log_data.get("timestamp"),
+        log_data.get("device_id"),
+        log_data["status"],
+        log_data["risk_score"],
+        log_data.get("model_version", "v1"),
+        log_data.get("was_confirmed_fraud")
     ))
     conn.commit()
     conn.close()

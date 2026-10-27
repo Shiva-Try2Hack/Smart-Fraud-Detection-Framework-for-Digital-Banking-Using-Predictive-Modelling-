@@ -102,6 +102,28 @@ def engineer_single_payload(payload: Dict[str, Any], feature_cols: List[str]) ->
         "orig_balance_err": orig_balance_err,
         "dest_balance_err": dest_balance_err
     }
+
+    # If payload contains behavioral features (e.g. from user_features.py), incorporate them
+    user_behavior = payload.get("user_behavior", {})
+    if isinstance(user_behavior, dict):
+        full_dict.update(user_behavior)
+
+    # Sensible defaults for behavioral features if model v2 expects them but user is cold-start
+    from src.features.schema import USER_BEHAVIOR_FEATURES
+    for b_feat in USER_BEHAVIOR_FEATURES:
+        if b_feat not in full_dict:
+            if b_feat in ["avg_amount_30d", "max_amount_30d"]:
+                full_dict[b_feat] = amount
+            elif b_feat == "cold_start":
+                full_dict[b_feat] = 1.0
+            elif b_feat == "receiver_account_age_days":
+                full_dict[b_feat] = 90.0
+            elif b_feat == "amount_percentile_for_user":
+                full_dict[b_feat] = 0.5
+            elif b_feat == "usual_hour_of_day":
+                full_dict[b_feat] = 12.0
+            else:
+                full_dict[b_feat] = 0.0
     
     row_data = {col: [full_dict.get(col, 0.0)] for col in feature_cols}
     return pd.DataFrame(row_data)

@@ -56,10 +56,21 @@ class RiskScoringEngine:
         verify_model_integrity(resolved_path)
 
         saved_bundle = joblib.load(resolved_path)
+        
+        # Phase 2 Requirement: Schema version check
+        from src.features.schema import FEATURE_SCHEMA_VERSION, FEATURE_COLUMNS_V2
+        bundle_schema = saved_bundle.get("schema_version")
+        if bundle_schema and bundle_schema != FEATURE_SCHEMA_VERSION:
+            raise ValueError(
+                f"Model schema version mismatch! Bundle has '{bundle_schema}', "
+                f"but runtime requires '{FEATURE_SCHEMA_VERSION}'"
+            )
+
         self.classifier = saved_bundle["classifier"]
         self.iso_model = saved_bundle.get("isolation_forest")
         self.calibrator = saved_bundle.get("calibrator")
         self.feature_columns = saved_bundle.get("feature_columns", ALL_11_FEATURES)
+        self.schema_version = bundle_schema or "1.0.0"
         self.thresholds = saved_bundle.get("thresholds", {
             "flagged": 0.40,
             "blocked": 0.75
