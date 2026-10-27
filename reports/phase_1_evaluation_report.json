@@ -1,0 +1,622 @@
+{
+  "metadata": {
+    "execution_date": "2026-10-27T18:28:46.806915",
+    "git_commit": "d3d1d624bd16b319fb81faa10896003dfc7b17ff",
+    "config": {
+      "dataset": {
+        "path": "data/paysim.csv",
+        "fallback_samples": 80000,
+        "train_ratio": 0.7,
+        "val_ratio": 0.15,
+        "test_ratio": 0.15,
+        "random_seed": 42
+      },
+      "training": {
+        "random_state": 42,
+        "cv_splits": 3,
+        "rf": {
+          "n_estimators": 60,
+          "max_depth": 12,
+          "class_weight": "balanced"
+        },
+        "lgbm": {
+          "n_estimators": 80,
+          "max_depth": 6,
+          "learning_rate": 0.05,
+          "scale_pos_weight": 10
+        },
+        "xgb": {
+          "n_estimators": 80,
+          "max_depth": 6,
+          "learning_rate": 0.05,
+          "scale_pos_weight": 10
+        }
+      },
+      "thresholds": {
+        "target_blocked_precision": 0.9,
+        "max_flagged_fpr": 0.02,
+        "default_flagged": 0.4,
+        "default_blocked": 0.75
+      },
+      "explainability": {
+        "top_k_reasons": 3
+      },
+      "models_dir": "src/models",
+      "reports_dir": "reports"
+    },
+    "data_summary": {
+      "dataset_source": "Synthetic PaySim Benchmark (80,000 samples, step 1-743)",
+      "total_records": 80000,
+      "total_fraud_records": 120,
+      "train": {
+        "records": 56000,
+        "step_range": [
+          1,
+          520
+        ],
+        "fraud_count": 87,
+        "fraud_rate_pct": 0.1554
+      },
+      "val": {
+        "records": 12000,
+        "step_range": [
+          520,
+          630
+        ],
+        "fraud_count": 18,
+        "fraud_rate_pct": 0.15
+      },
+      "test": {
+        "records": 12000,
+        "step_range": [
+          630,
+          743
+        ],
+        "fraud_count": 15,
+        "fraud_rate_pct": 0.125
+      }
+    }
+  },
+  "baseline_metrics": {
+    "model_name": "Baseline (RF 11 Features)",
+    "roc_auc": 1.0,
+    "pr_auc": 1.0,
+    "brier_score": 0.0,
+    "blocked_metrics": {
+      "threshold": 0.75,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "confusion_matrix": [
+        [
+          11985,
+          0
+        ],
+        [
+          0,
+          15
+        ]
+      ]
+    },
+    "flagged_metrics": {
+      "threshold": 0.4,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "confusion_matrix": [
+        [
+          11985,
+          0
+        ],
+        [
+          0,
+          15
+        ]
+      ]
+    },
+    "recall_at_fixed_fpr": {
+      "recall_at_fpr_1_pct": 1.0,
+      "recall_at_fpr_0.1_pct": 1.0,
+      "recall_at_fpr_0.01_pct": 1.0
+    },
+    "precision_at_top_k": {
+      "precision_at_100": 0.15,
+      "precision_at_500": 0.03,
+      "precision_at_1000": 0.015
+    },
+    "monetary": {
+      "total_fraud_inr": 11555622.445887526,
+      "blocked_fraud_inr": 11555622.445887526,
+      "missed_fraud_inr": 0.0,
+      "intercepted_or_flagged_inr": 11555622.445887526,
+      "money_catch_rate": 1.0
+    }
+  },
+  "ablation_study": {
+    "all_11_features": {
+      "model_name": "Baseline (RF 11 Features)",
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "brier_score": 0.0,
+      "blocked_metrics": {
+        "threshold": 0.75,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "confusion_matrix": [
+          [
+            11985,
+            0
+          ],
+          [
+            0,
+            15
+          ]
+        ]
+      },
+      "flagged_metrics": {
+        "threshold": 0.4,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "confusion_matrix": [
+          [
+            11985,
+            0
+          ],
+          [
+            0,
+            15
+          ]
+        ]
+      },
+      "recall_at_fixed_fpr": {
+        "recall_at_fpr_1_pct": 1.0,
+        "recall_at_fpr_0.1_pct": 1.0,
+        "recall_at_fpr_0.01_pct": 1.0
+      },
+      "precision_at_top_k": {
+        "precision_at_100": 0.15,
+        "precision_at_500": 0.03,
+        "precision_at_1000": 0.015
+      },
+      "monetary": {
+        "total_fraud_inr": 11555622.445887526,
+        "blocked_fraud_inr": 11555622.445887526,
+        "missed_fraud_inr": 0.0,
+        "intercepted_or_flagged_inr": 11555622.445887526,
+        "money_catch_rate": 1.0
+      }
+    },
+    "no_balance_errors": {
+      "model_name": "Without Balance Errors (9 Feats)",
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "brier_score": 0.0,
+      "blocked_metrics": {
+        "threshold": 0.75,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "confusion_matrix": [
+          [
+            11985,
+            0
+          ],
+          [
+            0,
+            15
+          ]
+        ]
+      },
+      "flagged_metrics": {
+        "threshold": 0.4,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "confusion_matrix": [
+          [
+            11985,
+            0
+          ],
+          [
+            0,
+            15
+          ]
+        ]
+      },
+      "recall_at_fixed_fpr": {
+        "recall_at_fpr_1_pct": 1.0,
+        "recall_at_fpr_0.1_pct": 1.0,
+        "recall_at_fpr_0.01_pct": 1.0
+      },
+      "precision_at_top_k": {
+        "precision_at_100": 0.15,
+        "precision_at_500": 0.03,
+        "precision_at_1000": 0.015
+      },
+      "monetary": {
+        "total_fraud_inr": 11555622.445887526,
+        "blocked_fraud_inr": 11555622.445887526,
+        "missed_fraud_inr": 0.0,
+        "intercepted_or_flagged_inr": 11555622.445887526,
+        "money_catch_rate": 1.0
+      }
+    },
+    "leak_free_pre_transaction": {
+      "model_name": "Pre-Txn Leak-Free (5 Feats)",
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "brier_score": 0.0,
+      "blocked_metrics": {
+        "threshold": 0.75,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "confusion_matrix": [
+          [
+            11985,
+            0
+          ],
+          [
+            0,
+            15
+          ]
+        ]
+      },
+      "flagged_metrics": {
+        "threshold": 0.4,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "confusion_matrix": [
+          [
+            11985,
+            0
+          ],
+          [
+            0,
+            15
+          ]
+        ]
+      },
+      "recall_at_fixed_fpr": {
+        "recall_at_fpr_1_pct": 1.0,
+        "recall_at_fpr_0.1_pct": 1.0,
+        "recall_at_fpr_0.01_pct": 1.0
+      },
+      "precision_at_top_k": {
+        "precision_at_100": 0.15,
+        "precision_at_500": 0.03,
+        "precision_at_1000": 0.015
+      },
+      "monetary": {
+        "total_fraud_inr": 11555622.445887526,
+        "blocked_fraud_inr": 11555622.445887526,
+        "missed_fraud_inr": 0.0,
+        "intercepted_or_flagged_inr": 11555622.445887526,
+        "money_catch_rate": 1.0
+      }
+    }
+  },
+  "imbalance_strategies": {
+    "balanced_weights": {
+      "model_name": "Baseline (RF 11 Features)",
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "brier_score": 0.0,
+      "blocked_metrics": {
+        "threshold": 0.75,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "confusion_matrix": [
+          [
+            11985,
+            0
+          ],
+          [
+            0,
+            15
+          ]
+        ]
+      },
+      "flagged_metrics": {
+        "threshold": 0.4,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "confusion_matrix": [
+          [
+            11985,
+            0
+          ],
+          [
+            0,
+            15
+          ]
+        ]
+      },
+      "recall_at_fixed_fpr": {
+        "recall_at_fpr_1_pct": 1.0,
+        "recall_at_fpr_0.1_pct": 1.0,
+        "recall_at_fpr_0.01_pct": 1.0
+      },
+      "precision_at_top_k": {
+        "precision_at_100": 0.15,
+        "precision_at_500": 0.03,
+        "precision_at_1000": 0.015
+      },
+      "monetary": {
+        "total_fraud_inr": 11555622.445887526,
+        "blocked_fraud_inr": 11555622.445887526,
+        "missed_fraud_inr": 0.0,
+        "intercepted_or_flagged_inr": 11555622.445887526,
+        "money_catch_rate": 1.0
+      }
+    },
+    "undersampling_1_to_10": {
+      "model_name": "1:10 Majority Undersampling",
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "brier_score": 0.0001,
+      "blocked_metrics": {
+        "threshold": 0.75,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "confusion_matrix": [
+          [
+            11985,
+            0
+          ],
+          [
+            0,
+            15
+          ]
+        ]
+      },
+      "flagged_metrics": {
+        "threshold": 0.4,
+        "precision": 0.9375,
+        "recall": 1.0,
+        "f1": 0.9677,
+        "confusion_matrix": [
+          [
+            11984,
+            1
+          ],
+          [
+            0,
+            15
+          ]
+        ]
+      },
+      "recall_at_fixed_fpr": {
+        "recall_at_fpr_1_pct": 1.0,
+        "recall_at_fpr_0.1_pct": 1.0,
+        "recall_at_fpr_0.01_pct": 1.0
+      },
+      "precision_at_top_k": {
+        "precision_at_100": 0.15,
+        "precision_at_500": 0.03,
+        "precision_at_1000": 0.015
+      },
+      "monetary": {
+        "total_fraud_inr": 11555622.445887526,
+        "blocked_fraud_inr": 11555622.445887526,
+        "missed_fraud_inr": 0.0,
+        "intercepted_or_flagged_inr": 11555622.445887526,
+        "money_catch_rate": 1.0
+      }
+    }
+  },
+  "validation_comparison": [
+    {
+      "model_name": "RandomForest",
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "brier_score": 0.0,
+      "blocked_metrics": {
+        "threshold": 0.75,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "confusion_matrix": [
+          [
+            11982,
+            0
+          ],
+          [
+            0,
+            18
+          ]
+        ]
+      },
+      "flagged_metrics": {
+        "threshold": 0.4,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "confusion_matrix": [
+          [
+            11982,
+            0
+          ],
+          [
+            0,
+            18
+          ]
+        ]
+      },
+      "recall_at_fixed_fpr": {
+        "recall_at_fpr_1_pct": 1.0,
+        "recall_at_fpr_0.1_pct": 1.0,
+        "recall_at_fpr_0.01_pct": 1.0
+      },
+      "precision_at_top_k": {
+        "precision_at_100": 0.18,
+        "precision_at_500": 0.036,
+        "precision_at_1000": 0.018
+      },
+      "monetary": {}
+    },
+    {
+      "model_name": "LightGBM",
+      "roc_auc": 1.0,
+      "pr_auc": 0.9737,
+      "brier_score": 0.0001,
+      "blocked_metrics": {
+        "threshold": 0.75,
+        "precision": 0.9474,
+        "recall": 1.0,
+        "f1": 0.973,
+        "confusion_matrix": [
+          [
+            11981,
+            1
+          ],
+          [
+            0,
+            18
+          ]
+        ]
+      },
+      "flagged_metrics": {
+        "threshold": 0.4,
+        "precision": 0.9474,
+        "recall": 1.0,
+        "f1": 0.973,
+        "confusion_matrix": [
+          [
+            11981,
+            1
+          ],
+          [
+            0,
+            18
+          ]
+        ]
+      },
+      "recall_at_fixed_fpr": {
+        "recall_at_fpr_1_pct": 1.0,
+        "recall_at_fpr_0.1_pct": 1.0,
+        "recall_at_fpr_0.01_pct": 1.0
+      },
+      "precision_at_top_k": {
+        "precision_at_100": 0.18,
+        "precision_at_500": 0.036,
+        "precision_at_1000": 0.018
+      },
+      "monetary": {}
+    },
+    {
+      "model_name": "XGBoost",
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "brier_score": 0.0,
+      "blocked_metrics": {
+        "threshold": 0.75,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "confusion_matrix": [
+          [
+            11982,
+            0
+          ],
+          [
+            0,
+            18
+          ]
+        ]
+      },
+      "flagged_metrics": {
+        "threshold": 0.4,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "confusion_matrix": [
+          [
+            11982,
+            0
+          ],
+          [
+            0,
+            18
+          ]
+        ]
+      },
+      "recall_at_fixed_fpr": {
+        "recall_at_fpr_1_pct": 1.0,
+        "recall_at_fpr_0.1_pct": 1.0,
+        "recall_at_fpr_0.01_pct": 1.0
+      },
+      "precision_at_top_k": {
+        "precision_at_100": 0.18,
+        "precision_at_500": 0.036,
+        "precision_at_1000": 0.018
+      },
+      "monetary": {}
+    }
+  ],
+  "final_model_v2_test_metrics": {
+    "model_name": "Calibrated RandomForest (v2)",
+    "roc_auc": 1.0,
+    "pr_auc": 1.0,
+    "brier_score": 0.0,
+    "blocked_metrics": {
+      "threshold": 0.05,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "confusion_matrix": [
+        [
+          11985,
+          0
+        ],
+        [
+          0,
+          15
+        ]
+      ]
+    },
+    "flagged_metrics": {
+      "threshold": 0.05,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "confusion_matrix": [
+        [
+          11985,
+          0
+        ],
+        [
+          0,
+          15
+        ]
+      ]
+    },
+    "recall_at_fixed_fpr": {
+      "recall_at_fpr_1_pct": 1.0,
+      "recall_at_fpr_0.1_pct": 1.0,
+      "recall_at_fpr_0.01_pct": 1.0
+    },
+    "precision_at_top_k": {
+      "precision_at_100": 0.15,
+      "precision_at_500": 0.03,
+      "precision_at_1000": 0.015
+    },
+    "monetary": {
+      "total_fraud_inr": 11555622.445887526,
+      "blocked_fraud_inr": 11555622.445887526,
+      "missed_fraud_inr": 0.0,
+      "intercepted_or_flagged_inr": 11555622.445887526,
+      "money_catch_rate": 1.0
+    }
+  },
+  "sha256_checksums": {
+    "fraud_model_v2.joblib": "9cc52388d8675992370297b05beb3c4eaee29365815e2c490598847a9418240f",
+    "fraud_model.pkl": "b8733e6a6f6d15a8eae5962862d6c52d972b0886ea013180563cdb0681ffda20"
+  }
+}

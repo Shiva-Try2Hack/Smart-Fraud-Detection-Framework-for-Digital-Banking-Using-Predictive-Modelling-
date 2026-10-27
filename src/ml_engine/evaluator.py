@@ -2,28 +2,35 @@ import os
 import joblib
 import pandas as pd
 import numpy as np
-
 import sys
+from typing import Optional, Dict, Any, List
 
-def _resolve_model_path():
+from src.ml_engine.integrity import verify_model_integrity
+from src.ml_engine.explainer import TransactionExplainer
+from src.ml_engine.features import engineer_single_payload, ALL_11_FEATURES
+
+MODEL_VERSION = os.environ.get("MODEL_VERSION", "v1").lower()
+
+def _resolve_model_path(version: str = "v1"):
+    model_filename = "fraud_model_v2.joblib" if version == "v2" else "fraud_model.pkl"
     # 1. Check relative to current evaluator file (__file__)
     candidates = [
-        os.path.join(os.path.dirname(__file__), "..", "models", "fraud_model.pkl"),
-        os.path.join(os.path.dirname(__file__), "..", "..", "src", "models", "fraud_model.pkl"),
+        os.path.join(os.path.dirname(__file__), "..", "models", model_filename),
+        os.path.join(os.path.dirname(__file__), "..", "..", "src", "models", model_filename),
     ]
-    # 2. Check relative to sys.executable directory (e.g. D:\New Folder\src\models\fraud_model.pkl)
+    # 2. Check relative to sys.executable directory
     if getattr(sys, "frozen", False):
         exe_dir = os.path.dirname(sys.executable)
         candidates.extend([
-            os.path.join(exe_dir, "src", "models", "fraud_model.pkl"),
-            os.path.join(exe_dir, "models", "fraud_model.pkl"),
-            os.path.join(exe_dir, "lib", "src", "models", "fraud_model.pkl"),
+            os.path.join(exe_dir, "src", "models", model_filename),
+            os.path.join(exe_dir, "models", model_filename),
+            os.path.join(exe_dir, "lib", "src", "models", model_filename),
         ])
     # 3. Check current working directory
     cwd = os.getcwd()
     candidates.extend([
-        os.path.join(cwd, "src", "models", "fraud_model.pkl"),
-        os.path.join(cwd, "models", "fraud_model.pkl"),
+        os.path.join(cwd, "src", "models", model_filename),
+        os.path.join(cwd, "models", model_filename),
     ])
     for c in candidates:
         norm = os.path.abspath(c)
@@ -31,18 +38,33 @@ def _resolve_model_path():
             return norm
     return os.path.abspath(candidates[0])
 
-MODEL_PATH = _resolve_model_path()
+MODEL_PATH = _resolve_model_path(MODEL_VERSION)
 
 class RiskScoringEngine:
-    def __init__(self):
-        resolved_path = _resolve_model_path()
+    def __init__(self, version: Optional[str] = None):
+        self.version = (version or MODEL_VERSION).lower()
+        resolved_path = _resolve_model_path(self.version)
         if not os.path.exists(resolved_path):
-            raise FileNotFoundError(f"Model file not found at {resolved_path}. Run train.py first.")
+            # Fallback to v1 if v2 requested but not present
+            if self.version == "v2":
+                self.version = "v1"
+                resolved_path = _resolve_model_path("v1")
+            if not os.path.exists(resolved_path):
+                raise FileNotFoundError(f"Model file not found at {resolved_path}. Run train.py first.")
         
+        # Hard Rule 12: Cryptographic SHA-256 integrity check before loading
+        verify_model_integrity(resolved_path)
+
         saved_bundle = joblib.load(resolved_path)
-        self.rf_model = saved_bundle["classifier"]
-        self.iso_model = saved_bundle["isolation_forest"]
-        self.feature_columns = saved_bundle["feature_columns"]
+        self.classifier = saved_bundle["classifier"]
+        self.iso_model = saved_bundle.get("isolation_forest")
+        self.calibrator = saved_bundle.get("calibrator")
+        self.feature_columns = saved_bundle.get("feature_columns", ALL_11_FEATURES)
+        self.thresholds = saved_bundle.get("thresholds", {
+            "flagged": 0.40,
+            "blocked": 0.75
+        })
+        self.explainer = TransactionExplainer(self.classifier, self.feature_columns)
         self.type_map = {"PAYMENT": 0, "TRANSFER": 1, "CASH_OUT": 2, "CASH_IN": 3, "DEBIT": 4}
 
     def prepare_features(self, payload: dict) -> pd.DataFrame:
@@ -104,29 +126,51 @@ class RiskScoringEngine:
         if sender_balance > 0 and (amount / sender_balance) >= 0.95 and amount >= 10000:
             reasons.append("Critical Account Depletion: Over 95% of total balance being transferred in single shot")
 
-        # --- Layer 2 & 3: Model Inference ---
-        features = self.prepare_features(payload)
+        # Prepare features as DataFrame with names to eliminate warnings
+        feature_df = engineer_single_payload(payload, self.feature_columns)
         
-        # Random Forest Probability [0.0 - 1.0]
-        rf_prob = float(self.rf_model.predict_proba(features)[0][1])
+        # Raw supervised classifier probability
+        raw_prob = float(self.classifier.predict_proba(feature_df)[0][1])
+        
+        # Apply isotonic calibration if present
+        if self.calibrator is not None:
+            calibrated_prob = float(self.calibrator.predict(np.array([raw_prob]))[0])
+            ml_prob = calibrated_prob
+        else:
+            ml_prob = raw_prob
         
         # Isolation Forest outlier detection: -1 is anomaly, 1 is normal
-        iso_decision = int(self.iso_model.predict(features)[0])
-        is_outlier = (iso_decision == -1)
+        is_outlier = False
+        if self.iso_model is not None:
+            try:
+                iso_decision = int(self.iso_model.predict(feature_df)[0])
+                is_outlier = (iso_decision == -1)
+            except Exception:
+                is_outlier = False
+
         if is_outlier:
             reasons.append("Zero-Day Anomaly: Transaction deviates significantly from normal spending baseline")
 
-        if rf_prob >= 0.70:
-            reasons.append(f"Supervised ML Fraud Risk Alert (Confidence: {rf_prob*100:.1f}%)")
+        # Thresholds
+        flagged_th = self.thresholds.get("flagged", 0.40)
+        blocked_th = self.thresholds.get("blocked", 0.75)
+
+        if ml_prob >= flagged_th:
+            reasons.append(f"Supervised ML Fraud Risk Alert (Confidence: {ml_prob*100:.1f}%)")
+            # Generate SHAP top-3 explainability reasons
+            shap_reasons = self.explainer.explain_transaction(feature_df, top_k=3)
+            for sr in shap_reasons:
+                if sr not in reasons:
+                    reasons.append(sr)
 
         # --- Layer 4: Final Risk Tiering ---
         # Overall risk score calculation
-        combined_risk_score = round(max(rf_prob, 0.95 if is_hard_rule_violation else (0.75 if (is_outlier and rf_prob > 0.4) else rf_prob)), 4)
+        combined_risk_score = round(max(ml_prob, 0.95 if is_hard_rule_violation else (0.75 if (is_outlier and ml_prob > 0.4) else ml_prob)), 4)
 
-        if combined_risk_score >= 0.75 or is_hard_rule_violation:
+        if combined_risk_score >= blocked_th or is_hard_rule_violation:
             status = "BLOCKED"
             risk_level = "CRITICAL"
-        elif combined_risk_score >= 0.40:
+        elif combined_risk_score >= flagged_th:
             status = "FLAGGED"
             risk_level = "MEDIUM"
             if not reasons:
@@ -141,7 +185,8 @@ class RiskScoringEngine:
             "status": status,
             "risk_score": combined_risk_score,
             "risk_level": risk_level,
-            "supervised_ml_prob": round(rf_prob, 4),
+            "supervised_ml_prob": round(ml_prob, 4),
             "anomaly_detected": is_outlier,
-            "reasons": reasons
+            "reasons": reasons,
+            "model_version": self.version
         }

@@ -1,0 +1,37 @@
+dataset:
+  path: "data/paysim.csv"
+  fallback_samples: 80000
+  train_ratio: 0.70
+  val_ratio: 0.15
+  test_ratio: 0.15
+  random_seed: 42
+
+training:
+  random_state: 42
+  cv_splits: 3
+  rf:
+    n_estimators: 60
+    max_depth: 12
+    class_weight: "balanced"
+  lgbm:
+    n_estimators: 80
+    max_depth: 6
+    learning_rate: 0.05
+    scale_pos_weight: 10
+  xgb:
+    n_estimators: 80
+    max_depth: 6
+    learning_rate: 0.05
+    scale_pos_weight: 10
+
+thresholds:
+  target_blocked_precision: 0.90
+  max_flagged_fpr: 0.02
+  default_flagged: 0.40
+  default_blocked: 0.75
+
+explainability:
+  top_k_reasons: 3
+
+models_dir: "src/models"
+reports_dir: "reports"

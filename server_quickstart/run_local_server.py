@@ -44,6 +44,7 @@ class PaymentResponse(BaseModel):
     anomaly_detected: bool
     reasons: List[str]
     sender_new_balance: Optional[float] = None
+    model_version: Optional[str] = None
 
 @app.get("/")
 def health_check():
@@ -151,7 +152,8 @@ def process_payment(payload: PaymentRequest):
         supervised_ml_prob=eval_result["supervised_ml_prob"],
         anomaly_detected=eval_result["anomaly_detected"],
         reasons=eval_result["reasons"],
-        sender_new_balance=sender_new_bal
+        sender_new_balance=sender_new_bal,
+        model_version=eval_result.get("model_version")
     )
 
 if __name__ == "__main__":

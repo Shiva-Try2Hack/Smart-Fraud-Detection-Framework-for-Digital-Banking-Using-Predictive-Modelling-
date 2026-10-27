@@ -40,6 +40,11 @@ build/
 dist/
 *.egg-info/
 
+# Datasets (Hard Rule 13: large datasets must NOT be committed to git)
+data/
+*.csv
+!build/**/tests/data/*.csv
+
 # Android build outputs & local system configs
 .gradle/
 .kotlin/
