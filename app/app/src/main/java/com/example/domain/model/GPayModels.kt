@@ -85,7 +85,9 @@ data class PaymentProcessResult(
     val status: TransactionStatus,
     val message: String,
     val updatedBalance: Double?,
-    val transaction: TransactionRecord?
+    val transaction: TransactionRecord?,
+    val recommendedAction: String? = null,
+    val scamWarning: String? = null
 )
 
 data class ParsedUpiPayload(

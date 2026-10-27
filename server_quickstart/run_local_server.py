@@ -1,7 +1,7 @@
 import os
 import sys
 import uuid
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel, Field
 
@@ -45,6 +45,10 @@ class PaymentResponse(BaseModel):
     reasons: List[str]
     sender_new_balance: Optional[float] = None
     model_version: Optional[str] = None
+    recommended_action: Optional[str] = None
+    scam_warning: Optional[Dict[str, Any]] = None
+    hold_duration_minutes: Optional[int] = None
+    degraded_mode: Optional[bool] = False
 
 @app.get("/")
 def health_check():
@@ -176,7 +180,11 @@ def process_payment(payload: PaymentRequest):
         anomaly_detected=eval_result["anomaly_detected"],
         reasons=eval_result["reasons"],
         sender_new_balance=sender_new_bal,
-        model_version=eval_result.get("model_version")
+        model_version=eval_result.get("model_version"),
+        recommended_action=eval_result.get("recommended_action"),
+        scam_warning=eval_result.get("scam_warning"),
+        hold_duration_minutes=eval_result.get("hold_duration_minutes"),
+        degraded_mode=eval_result.get("degraded_mode", False)
     )
 
 if __name__ == "__main__":

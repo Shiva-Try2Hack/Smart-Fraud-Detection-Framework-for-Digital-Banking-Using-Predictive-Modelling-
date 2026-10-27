@@ -827,6 +827,33 @@ private fun PaymentResultReceiptView(
                 }
             }
 
+            // Phase 3 Minimal Enhancement: Action & Scam Warning Card (if present)
+            if (!result.recommendedAction.isNullOrBlank() || !result.scamWarning.isNullOrBlank()) {
+                Spacer(modifier = Modifier.height(10.dp))
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    color = GPayPillFill,
+                    border = androidx.compose.foundation.BorderStroke(1.dp, GPayBlue.copy(alpha = 0.5f)),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        if (!result.recommendedAction.isNullOrBlank()) {
+                            Text(
+                                text = "Action: ${result.recommendedAction}",
+                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold, color = GPayBlue)
+                            )
+                        }
+                        if (!result.scamWarning.isNullOrBlank()) {
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "⚠️ ${result.scamWarning}",
+                                style = MaterialTheme.typography.bodySmall.copy(color = GPayPrimaryText)
+                            )
+                        }
+                    }
+                }
+            }
+
             Spacer(modifier = Modifier.height(16.dp))
 
             // Detailed UTR & Bank Reference Card

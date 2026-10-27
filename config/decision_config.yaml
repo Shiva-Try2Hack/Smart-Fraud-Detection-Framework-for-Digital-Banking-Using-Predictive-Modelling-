@@ -1,0 +1,20 @@
+cost_model:
+  cost_of_missed_fraud_multiplier: 1.0  # Fraud loss = transaction amount
+  cost_of_false_block: 500.0            # Customer friction, support calls, reputational churn (INR)
+  cost_of_step_up: 25.0                 # Friction of OTP / Biometric / Warning (INR)
+  cost_of_review_hold: 100.0            # Delay / manual review operational cost (INR)
+
+limits:
+  new_payee_daily_limit_inr: 50000.0    # Lower cap for first 24h after adding payee
+  high_value_transaction_cap_inr: 500000.0
+
+thresholds:
+  allow_max: 0.18
+  warn_max: 0.35
+  step_up_max: 0.65
+  hold_review_max: 0.80
+  block_min: 0.80
+
+action_delays:
+  hold_for_review_minutes: 10
+  scam_warning_confirmation_delay_seconds: 5

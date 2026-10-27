@@ -592,13 +592,19 @@ class GPayRepository(private val context: Context) {
                 fallbackNote = note
             )
 
+            val recAction = json.optString("recommended_action").ifBlank { null }
+            val scamWarnObj = json.optJSONObject("scam_warning")
+            val scamWarnMsg = scamWarnObj?.optString("message") ?: json.optString("scam_warning").ifBlank { null }
+
             Result.success(
                 PaymentProcessResult(
                     success = isSuccess,
                     status = txStatus,
                     message = message,
                     updatedBalance = newBalance,
-                    transaction = record
+                    transaction = record,
+                    recommendedAction = recAction,
+                    scamWarning = scamWarnMsg
                 )
             )
         } catch (e: Exception) {

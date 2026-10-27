@@ -137,67 +137,62 @@ class RiskScoringEngine:
         if sender_balance > 0 and (amount / sender_balance) >= 0.95 and amount >= 10000:
             reasons.append("Critical Account Depletion: Over 95% of total balance being transferred in single shot")
 
-        # Prepare features as DataFrame with names to eliminate warnings
-        feature_df = engineer_single_payload(payload, self.feature_columns)
-        
-        # Raw supervised classifier probability
-        raw_prob = float(self.classifier.predict_proba(feature_df)[0][1])
-        
-        # Apply isotonic calibration if present
-        if self.calibrator is not None:
-            calibrated_prob = float(self.calibrator.predict(np.array([raw_prob]))[0])
-            ml_prob = calibrated_prob
-        else:
-            ml_prob = raw_prob
-        
-        # Isolation Forest outlier detection: -1 is anomaly, 1 is normal
+        # --- Layer 2 & 3: Model Inference & Feature Extraction ---
+        from src.ml_engine.decision import DecisionLayer
+        decision_layer = DecisionLayer()
+
+        degraded_mode = bool(payload.get("degraded_mode", False))
         is_outlier = False
-        if self.iso_model is not None:
+        ml_prob = 0.0
+        shap_reasons = []
+
+        if not degraded_mode:
             try:
-                iso_decision = int(self.iso_model.predict(feature_df)[0])
-                is_outlier = (iso_decision == -1)
-            except Exception:
-                is_outlier = False
+                feature_df = engineer_single_payload(payload, self.feature_columns)
+                raw_prob = float(self.classifier.predict_proba(feature_df)[0][1])
+                
+                # Apply isotonic calibration
+                if self.calibrator is not None:
+                    ml_prob = float(self.calibrator.predict(np.array([raw_prob]))[0])
+                else:
+                    ml_prob = raw_prob
 
-        if is_outlier:
-            reasons.append("Zero-Day Anomaly: Transaction deviates significantly from normal spending baseline")
+                # Isolation Forest
+                if self.iso_model is not None:
+                    try:
+                        iso_decision = int(self.iso_model.predict(feature_df)[0])
+                        is_outlier = (iso_decision == -1)
+                    except Exception:
+                        is_outlier = False
 
-        # Thresholds
-        flagged_th = self.thresholds.get("flagged", 0.40)
-        blocked_th = self.thresholds.get("blocked", 0.75)
+                # SHAP Explainability if elevated risk
+                flagged_th = self.thresholds.get("flagged", 0.35)
+                if ml_prob >= flagged_th:
+                    shap_reasons = self.explainer.explain_transaction(feature_df, top_k=3)
+            except Exception as e:
+                # Automatic safe fallback if model evaluation errors
+                degraded_mode = True
+                payload["degraded_mode"] = True
 
-        if ml_prob >= flagged_th:
-            reasons.append(f"Supervised ML Fraud Risk Alert (Confidence: {ml_prob*100:.1f}%)")
-            # Generate SHAP top-3 explainability reasons
-            shap_reasons = self.explainer.explain_transaction(feature_df, top_k=3)
-            for sr in shap_reasons:
-                if sr not in reasons:
-                    reasons.append(sr)
-
-        # --- Layer 4: Final Risk Tiering ---
-        # Overall risk score calculation
-        combined_risk_score = round(max(ml_prob, 0.95 if is_hard_rule_violation else (0.75 if (is_outlier and ml_prob > 0.4) else ml_prob)), 4)
-
-        if combined_risk_score >= blocked_th or is_hard_rule_violation:
-            status = "BLOCKED"
-            risk_level = "CRITICAL"
-        elif combined_risk_score >= flagged_th:
-            status = "FLAGGED"
-            risk_level = "MEDIUM"
-            if not reasons:
-                reasons.append("Moderate risk score requiring step-up verification")
-        else:
-            status = "APPROVED"
-            risk_level = "LOW"
-            if not reasons:
-                reasons.append("Transaction verified and safe")
+        # Phase 3 Decision Layer Evaluation
+        decision_out = decision_layer.decide(
+            payload=payload,
+            ml_probability=ml_prob,
+            is_anomaly=is_outlier,
+            shap_reasons=shap_reasons
+        )
 
         return {
-            "status": status,
-            "risk_score": combined_risk_score,
-            "risk_level": risk_level,
+            "status": decision_out["status"],
+            "risk_score": decision_out["risk_score"],
+            "risk_level": decision_out["risk_level"],
             "supervised_ml_prob": round(ml_prob, 4),
             "anomaly_detected": is_outlier,
-            "reasons": reasons,
-            "model_version": self.version
+            "reasons": decision_out["reasons"],
+            "model_version": self.version,
+            "recommended_action": decision_out["recommended_action"],
+            "scam_warning": decision_out["scam_warning"],
+            "hold_duration_minutes": decision_out["hold_duration_minutes"],
+            "structured_reasons": decision_out["structured_reasons"],
+            "degraded_mode": decision_out["degraded_mode"]
         }
