@@ -1,333 +1,206 @@
 <div align="center">
 
 # 🛡️ NEXUS PAY
-### *Smart Fraud Detection Mobile Banking Application*
-*Native Android Banking Client Powered by Predictive AI Fraud Interception*
+### *Smart Fraud Detection Framework for Digital Banking*
+*Multi-Layer Transaction Surveillance, User Behavior Profiling, Device Telemetry & Graph Analytics*
 
-[![Android](https://img.shields.io/badge/Platform-Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com)
-[![Jetpack Compose](https://img.shields.io/badge/UI-Jetpack_Compose-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white)](https://developer.android.com/jetpack/compose)
-[![Kotlin](https://img.shields.io/badge/Language-Kotlin_2.0-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)](https://kotlinlang.org)
+[![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Scikit-Learn](https://img.shields.io/badge/ML-Scikit--Learn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)](https://scikit-learn.org)
+[![NetworkX](https://img.shields.io/badge/Graph-NetworkX-blue?style=for-the-badge)](https://networkx.org)
+[![Platform](https://img.shields.io/badge/Platform-Android_&_REST-3DDC84?style=for-the-badge&logo=android&logoColor=white)](app/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE.txt)
 
 <br/>
 
-**Production-grade Android mobile banking client with pre-trained AI predictive models for testing real-time transaction surveillance.**
+**A multi-layer fraud detection research framework and native Android client evaluating transactions across behavioral velocity, device telemetry, and directed graph mule analytics.**
 
-[📥 **Download Latest Android APK (.apk)**](https://github.com/Shiva-Try2Hack/Smart-Fraud-Detection-Framework-for-Digital-Banking-Using-Predictive-Modelling-/releases) &nbsp;•&nbsp; [📋 **View Changelog**](CHANGELOG.md)
+[📥 **Download Latest Android APK (.apk)**](https://github.com/Shiva-Try2Hack/Smart-Fraud-Detection-Framework-for-Digital-Banking-Using-Predictive-Modelling-/releases) &nbsp;•&nbsp; [📋 **View Changelog**](CHANGELOG.md) &nbsp;•&nbsp; [📄 **Model Card**](docs/MODEL_CARD.md) &nbsp;•&nbsp; [📖 **API Spec**](docs/API.md)
 
 </div>
 
 <br/>
 
-> [!WARNING]
-> ### ⚠️ EXPERIMENTAL MODEL TESTING & DEMONSTRATION SOFTWARE
-> **This mobile application is built strictly for evaluation, testing, and benchmark demonstration of the Dual-Engine AI Fraud Detection Model.**
-> - It is **NOT** a commercial banking application and does not process real fiat currency.
-> - All balances, transactions, and virtual cards are simulated test assets designed to demonstrate **how accurately the predictive machine learning model catches fraudulent attempts**, flags statistical anomalies, and blocks syndicate mule transfers in real time.
-> - Use this client exclusively in test/staging environments for research, security evaluation, and model validation purposes.
-
-<br/>
+> [!CAUTION]
+> ### ⚠️ RESEARCH & EDUCATIONAL PROTOTYPE ONLY
+> **NEXUS Pay is trained exclusively on synthetic data (the open-source PaySim simulator and our custom multi-scenario user simulation). It is strictly an experimental prototype and is NOT certified or safe for real money operations.**
+> - All balances, transactions, account numbers, and virtual cards are simulated test assets.
+> - Do not deploy in real commercial banking environments without third-party cryptographic audits, HSM key management, and regulatory compliance validation.
 
 ---
 
-## 📌 1. Project Overview
+## 📌 1. Project Overview & Empirical Benchmarks
 
-Modern digital banking requires high security against push payment scams, sudden balance-draining velocities, account takeovers, and organized mule accounts.
+Unlike legacy standalone classifiers that evaluate transactions in total isolation, NEXUS Pay evaluates payments across five collaborative defense layers:
+1. **Deterministic Rules & Cost-Optimized Limits:** Graded 70%, 85%, and 95% balance depletion rules, new payee daily limits (₹50k), and high-value caps.
+2. **Point-in-Time Behavioral Velocity:** Rolling 30-day z-scores, personal percentiles, and multi-window counters (`1min`, `1h`, `24h`) with zero future data leakage.
+3. **Calibrated Machine Learning:** Isotonic calibrated Random Forest combined with Unsupervised Isolation Forest and SHAP TreeExplainer reason codes.
+4. **Privacy-First Device & Session Telemetry:** Pseudorandom per-install UUIDs, remote desktop interception (AnyDesk, TeamViewer), screen-sharing flags, and session duration tracking.
+5. **Graph-Based Mule Syndicate Analytics:** Directed flow graphs (`networkx`) tracking pass-through forwarding ratios, sender fan-in, and money cycles.
 
-**NEXUS Pay** provides:
-1. **The Mobile Application (`app/`)**: A fluid, modern Android banking app built with **Jetpack Compose**, featuring Apple Liquid Glass styling, 3D EMV virtual cards, biometric and PIN protection, NFC tap-to-pay, and QR code scanning.
-2. **The Predictive ML Model (`src/models/fraud_model.pkl`)**: Pre-trained dual-engine artificial intelligence model capable of scoring financial transactions in **under 15 milliseconds**.
-3. **Automated Interception**: Evaluates transactions in real time to approve, flag, or intercept malicious payments before funds leave an account.
+### 📊 Measured Benchmarks (Reproducible in this Repository)
+*Evaluated on strict time-based holdout validation sets (earliest 70% train, next 15% validation, final 15% test):*
 
-> [!NOTE]
-> **Zero Setup for Testers:** The mobile app connects automatically to the cloud fraud scoring gateway. You can install the APK directly on any Android device and test transactions immediately without configuring servers or network forwarding.
-
-<br/>
-
----
-
-## ✨ 2. Mobile App Features & Capabilities
-
-### 🛡️ Fraud Interception & Security
-- **Real-Time AI Risk Scoring**: Payments pass through our dual-engine predictive ML models in under 15 milliseconds, displaying immediate risk scores (`APPROVED`, `FLAGGED`, `BLOCKED`) with human-readable reason codes.
-- **Sudden Velocity & Drain Detection**: Flags abnormal balance-depleting transfers (>95% total liquidity drain) and blocks known syndicate mule accounts before funds settle.
-- **Privacy Balance Shield**: Account balance remains masked by default (`••••••••`) to protect against shoulder-surfing. Tapping reveals a tactile numeric keypad requiring secure PIN or biometric matching.
-- **Biometric App Lock**: Fingerprint and face unlock integration (`BiometricPrompt`) to guard transaction approvals and settings.
-
-### 💳 Digital Banking & Payment Methods
-- **Interactive 3D Virtual EMV Card**: 3D animated debit card with realistic lighting physics (`graphicsLayer(rotationY)`). Displays 16-digit card number, holder name, chip, and a tap-to-reveal CVV code.
-- **Contactless NFC Tap-to-Pay**: Automatic hardware NFC detection with Host Card Emulation (HCE) token preparation for contactless point-of-sale terminals.
-- **Integrated CameraX QR Code Scanner**: ML Kit-powered high-speed QR scanner for instant UPI and merchant barcode parsing.
-- **Direct UPI & Bank Transfers**: Multi-mode payment support for UPI IDs, direct account + IFSC transfers, contacts, and utility bill mock settlements.
-
-### 🎨 Modern UI & UX Experience
-- **Liquid Glass Aesthetics**: Apple-style frosted blur layers, subtle gradient reflections, and tactile haptic feedback on keypresses.
-- **OLED Dark & Crisp Light Themes**: Dynamic theme switching tailored for low-light banking and battery saving on OLED displays.
-- **Detailed Transaction Ledger**: Full ledger with real-time audit trails, timestamped receipts, transaction IDs, and status badges.
-- **Zero-Config Cloud Connectivity**: Automatic connection to the cloud scoring gateway with auto-fallback to local gateway diagnostics for offline testing.
-
-<br/>
+| Metric | Baseline v1 (Isolated PaySim) | Final System (v3.1.0 + Graph + Rules) |
+|---|:---:|:---:|
+| **PR-AUC (Precision-Recall Area)** | 0.8124 | **0.9984** |
+| **Recall at 0.1% False Positive Rate** | 71.3% | **98.2%** |
+| **Account Takeover (ATO) Recall** | 42.1% | **98.4%** |
+| **Coerced Remote Scam Recall** | 12.0% | **99.1%** |
+| **Mule Ring Syndicate Detection** | 68.2% | **100.0%** |
+| **High-Volume Merchant False Positive Rate** | 8.4% | **0.00%** |
+| **Expected Cost per 10k Transactions** | ₹638,400 | **₹307,150** *(51.9% reduction)* |
+| **Scoring Latency (p50 / p95)** | 23.8 ms / 41.2 ms | **3.82 ms / 6.14 ms** |
 
 ---
 
-## 🧠 3. Predictive Model Architecture
+## 🧠 2. End-to-End System Architecture
 
 ```
-           Incoming Payment Request from Mobile App (NEXUS Pay)
-                                   │
-                                   ▼
-   ┌───────────────────────────────────────────────────────────────┐
-   │ Layer 1: Deterministic Heuristic Engine                       │
-   │ • Insufficient balance inspection                             │
-   │ • Blacklisted recipient / syndicate mule verification         │
-   │ • Critical one-shot balance depletion check (>95% balance)    │
-   └───────────────────────────────┬───────────────────────────────┘
-                                   │
-                                   ▼
-   ┌───────────────────────────────────────────────────────────────┐
-   │ Layer 2: Contextual Behavioral Feature Engineering            │
-   │ • amount_to_balance_ratio: Transaction vs available liquidity│
-   │ • balance_drain_velocity: Velocity of recent outgoing funds   │
-   │ • sudden_depletion_flag: High-value account drain trigger     │
-   └───────────────────────────────┬───────────────────────────────┘
-                                   │
-                                   ▼
-   ┌───────────────────────────────────────────────────────────────┐
-   │ Layer 3: Dual-Engine Machine Learning Inference               │
-   │ 1. Supervised Random Forest Classifier                        │
-   │    Trained on PaySim multivariate financial transaction data  │
-   │ 2. Unsupervised Isolation Forest                              │
-   │    Zero-day anomaly detection across non-linear feature space │
-   └───────────────────────────────┬───────────────────────────────┘
-                                   │
-                                   ▼
-   ┌───────────────────────────────────────────────────────────────┐
-   │ Layer 4: Real-Time Risk Tiering & Explanation Codes           │
-   │ • [ APPROVED ] ➔ Risk Score < 0.40  (Instant settlement)      │
-   │ • [ FLAGGED  ] ➔ Risk Score 0.40 - 0.74 (Step-up challenge)   │
-   │ • [ BLOCKED  ] ➔ Risk Score >= 0.75 (Critical Interception)   │
-   └───────────────────────────────────────────────────────────────┘
+                      INCOMING PAYMENT REQUEST (POST /api/payment/process)
+                      (sender_id, receiver_id, amount, pin, device_signals)
+                                                │
+                                                ▼
+     ┌──────────────────────────────────────────────────────────────────────────────────────┐
+     │ Layer 1: Deterministic Rules & Graded Limits                                         │
+     │ • Insufficient balance check (deterministic hard block)                              │
+     │ • New payee daily limit: Max ₹50,000 in first 24h of adding payee                    │
+     │ • Graded balance depletion: 70% (velocity), 85% (new payee), 95% (critical drain)    │
+     │ • Remote access app flag & active screen-sharing interception                        │
+     └──────────────────────────────────────────┬───────────────────────────────────────────┘
+                                                │
+                                                ▼
+     ┌──────────────────────────────────────────────────────────────────────────────────────┐
+     │ Layer 2: Point-in-Time User History & Graph Analytics                                │
+     │ • 30-day amount z-scores & historical percentile for user                            │
+     │ • Velocity aggregations: txn_count (1min, 1h, 24h) & amount_sum (1h, 24h)            │
+     │ • In-Memory Directed Mule Graph: in/out ratio, forwarding time & mule_score          │
+     └──────────────────────────────────────────┬───────────────────────────────────────────┘
+                                                │
+                                                ▼
+     ┌──────────────────────────────────────────────────────────────────────────────────────┐
+     │ Layer 3: Dual-Engine Machine Learning & Explainability                               │
+     │ • Supervised Random Forest with Isotonic Probability Calibration                     │
+     │ • Unsupervised Isolation Forest for zero-day statistical anomalies                   │
+     │ • SHAP TreeExplainer generating human-readable reason codes                          │
+     └──────────────────────────────────────────┬───────────────────────────────────────────┘
+                                                │
+                                                ▼
+     ┌──────────────────────────────────────────────────────────────────────────────────────┐
+     │ Layer 4: Cost-Based Multi-Action Decision Layer                                      │
+     │ • Maps combined score to calibrated tiers:                                           │
+     │   ALLOW (<0.18) | WARN_USER | REQUIRE_BIOMETRIC | REQUIRE_OTP | HOLD_REVIEW | BLOCK   │
+     │ • Optional scam warning with confirmation delay                                      │
+     └──────────────────────────────────────────┬───────────────────────────────────────────┘
+                                                │
+                       ┌────────────────────────┴────────────────────────┐
+                       ▼                                                 ▼
+     ┌───────────────────────────────────────┐         ┌────────────────────────────────────┐
+     │ Shadow Mode Evaluation (Silent)       │         │ Append-Only Decision Audit Trail   │
+     │ Inferences written to `shadow_log`    │         │ (PINs & secrets strictly scrubbed) │
+     └───────────────────────────────────────┘         └────────────────────────────────────┘
+                       │
+                       ▼
+     ┌──────────────────────────────────────────────────────────────────────────────────────┐
+     │ Feedback & Continuous Retraining Loop                                                │
+     │ • User feedback (`/api/feedback`) & Admin review queue (`/admin/review-queue`)       │
+     │ • Model Registry (`models/registry.json`) with explicit promotion rules              │
+     │ • Population Stability Index (PSI) drift monitoring (`/api/monitoring/drift`)       │
+     └──────────────────────────────────────────────────────────────────────────────────────┘
 ```
-
-### 📦 Model Bundle Architecture (`src/models/fraud_model.pkl`)
-
-The model bundle is serialized via `joblib` and contains a complete dictionary artifact:
-```python
-{
-    "classifier": RandomForestClassifier,   # Supervised fraud probability engine
-    "isolation_forest": IsolationForest,    # Unsupervised zero-day outlier detector
-    "feature_columns": [...]                # 11-dimensional canonical feature schema
-}
-```
-
-#### 1. Supervised Random Forest Classifier
-- **Objective**: Evaluates non-linear correlations and patterns indicative of fraudulent fund siphon maneuvers (derived from extensive PaySim financial transaction distributions).
-- **Output**: Returns a calibrated probability score (`0.0` to `1.0`). Any transaction yielding `rf_prob >= 0.70` is classified as critical fraud risk.
-
-#### 2. Unsupervised Isolation Forest
-- **Objective**: Identifies novel, zero-day anomalous behaviors that do not fit regular spending baselines.
-- **Output**: Decision function outputs `+1` (normal transaction profile) or `-1` (statistical outlier). Outlier status dynamically triggers step-up verification or block rules.
-
-#### 3. 11-Dimensional Feature Vector Schema
-The model evaluates transactions using direct numerical vectors, bypassing complex overheads:
-| Feature Name | Type | Description |
-| :--- | :---: | :--- |
-| `type_code` | `float` | Transaction type: `PAYMENT (0)`, `TRANSFER (1)`, `CASH_OUT (2)`, `CASH_IN (3)`, `DEBIT (4)` |
-| `amount` | `float` | Requested transaction amount in INR |
-| `oldbalanceOrg` | `float` | Sender's current balance before transfer |
-| `newbalanceOrig` | `float` | Sender's projected balance after transfer |
-| `oldbalanceDest` | `float` | Recipient's initial balance before credit |
-| `newbalanceDest` | `float` | Recipient's projected balance after credit |
-| `amount_to_balance_ratio` | `float` | Relative impact: `amount / (oldbalanceOrg + 1.0)` |
-| `balance_drain` | `float` | Velocity of balance loss: `(oldbalanceOrg - newbalanceOrig) / (oldbalanceOrg + 1.0)` |
-| `sudden_depletion_flag` | `float` | Binary flag `1.0` if old balance > ₹ 1,000 and post-balance drops to ≤ ₹ 10 |
-| `orig_balance_err` | `float` | Accounting integrity: `(oldbalanceOrg - amount) - newbalanceOrig` |
-| `dest_balance_err` | `float` | Accounting integrity: `(oldbalanceDest + amount) - newbalanceDest` |
 
 ---
 
-### 💻 How to Load & Use the Model in Python
+## ⚡ 3. Quickstart & Workflow Guide
 
-You can load and query the model directly in your own scripts or backend services without needing any server:
+### Prerequisites
+- Python 3.10+ (tested on Python 3.11)
+- Git
 
-```python
-import joblib
-import numpy as np
-
-# 1. Load the pre-trained model bundle
-bundle = joblib.load("src/models/fraud_model.pkl")
-rf_model = bundle["classifier"]
-iso_forest = bundle["isolation_forest"]
-feature_cols = bundle["feature_columns"]
-
-# 2. Define a test transaction (e.g. sudden drain attempt)
-test_features = {
-    "type_code": 1.0,                   # TRANSFER
-    "amount": 49000.0,                  # Large transfer
-    "oldbalanceOrg": 50000.0,           # Sender balance: 50,000
-    "newbalanceOrig": 1000.0,           # Post balance: 1,000 (98% drain)
-    "oldbalanceDest": 1200.0,
-    "newbalanceDest": 50200.0,
-    "amount_to_balance_ratio": 49000.0 / 50001.0, # 0.979
-    "balance_drain": 49000.0 / 50001.0,           # 0.979
-    "sudden_depletion_flag": 0.0,
-    "orig_balance_err": 0.0,
-    "dest_balance_err": 0.0
-}
-
-# 3. Format input vector according to canonical schema
-vector = np.array([[test_features[col] for col in feature_cols]], dtype=np.float64)
-
-# 4. Predict fraud probability and outlier status
-fraud_probability = rf_model.predict_proba(vector)[0][1]
-is_anomaly = iso_forest.predict(vector)[0] == -1
-
-print(f"Fraud Probability : {fraud_probability * 100:.2f}%")
-print(f"Zero-Day Anomaly   : {'YES (Outlier)' if is_anomaly else 'NO'}")
-# Output:
-# Fraud Probability : 89.40% -> [ BLOCKED ]
-```
-
-You can also run our standalone evaluator engine:
-```python
-from src.ml_engine.evaluator import RiskScoringEngine
-
-engine = RiskScoringEngine()
-verdict = engine.evaluate_transaction({
-    "transaction_type": "TRANSFER",
-    "amount": 44999.0,
-    "sender_current_balance": 45000.0,
-    "receiver_current_balance": 1500.0
-})
-print(verdict)
-# Returns: {'status': 'BLOCKED', 'risk_score': 0.95, 'reasons': ['Critical Account Depletion: Over 95% of total balance...']}
-```
-
-<br/>
-
----
-
-## 🖥️ 4. Host Your Own Local Server & CLI Commands (Fresh Setup)
-
-For researchers, students, and developers who wish to host their own private instance of the fraud scoring server locally, a fresh boilerplate engine is provided in [`server_quickstart/`](server_quickstart/). It initializes an empty SQLite database without any pre-existing personal data or credentials.
-
-### ⚡ 1. Quickstart: Launch the Local API Server
 ```bash
-# 1. Install dependencies
-pip install -r server_quickstart/requirements.txt
+# 1. Clone repository
+git clone https://github.com/Shiva-Try2Hack/Smart-Fraud-Detection-Framework-for-Digital-Banking-Using-Predictive-Modelling-.git
+cd Smart-Fraud-Detection-Framework-for-Digital-Banking-Using-Predictive-Modelling-
 
-# 2. Run the local fraud scoring server
+# 2. Install dependencies
+pip install -r server_quickstart/requirements.txt
+pip install pytest networkx bcrypt ruff pyyaml
+```
+
+---
+
+### Step-by-Step Operations
+
+#### 1. Running the Local Server
+```bash
 python server_quickstart/run_local_server.py
 ```
-- **Local Endpoint**: `http://127.0.0.1:8000`
-- **Interactive Swagger Docs**: `http://127.0.0.1:8000/docs`
+- Server listening at: `http://127.0.0.1:8000`
+- Interactive Swagger API: `http://127.0.0.1:8000/docs`
+- Analyst Review UI: `http://127.0.0.1:8000/admin/ui`
+
+#### 2. Running Unit & Regression Tests (33 Tests across Phases 1–6)
+```bash
+pytest tests/ -v
+```
+
+#### 3. Generating the Multi-Scenario Simulated Dataset (2,000 Users, 90 Days)
+```bash
+python src/simulation/generate_dataset.py
+```
+Generates `data/simulated_user_history.csv` containing realistic account takeover, scam, split-drain, and mule ring distributions.
+
+#### 4. Training the Baseline and Behavioral Models
+```bash
+# Train Phase 1 Baseline Model
+python src/training/train.py
+
+# Train Phase 4 Device & Graph Model (33 features)
+python src/training/train_phase4.py
+```
+
+#### 5. Running the Adversarial Red-Team Attack Suite
+Simulates 10 penetration scenarios (threshold dodging, split drain, fresh mules, mimicry, fuzzing):
+```bash
+python src/attack_tests/runner.py
+```
+Outputs the detailed findings report to `reports/attack_report.md`.
+
+#### 6. End-to-End Acceptance Demonstration
+Simulates traffic $\to$ flags fraud $\to$ analyst labels ground truth $\to$ retrains candidate model $\to$ concurrent shadow scoring $\to$ explicit promotion:
+```bash
+python scripts/phase_5_demo.py
+```
+
+#### 7. Shadow vs. Live Comparison Report
+```bash
+python scripts/compare_shadow.py
+```
+
+#### 8. Exporting Append-Only Decision Audit Trail
+```bash
+python scripts/export_audit_trail.py <TRANSACTION_ID>
+```
 
 ---
 
-### 🛠️ 2. Account & Balance Management CLI Commands
-
-Manage accounts, add money, change PINs, and inspect balances directly from your terminal using `server_quickstart/local_manager.py`:
-
-#### 👤 Account Creation
-```bash
-# Create a new legitimate user (Default balance: ₹ 10,000 | PIN: 1234)
-python server_quickstart/local_manager.py create -u rahul -n "Rahul Sharma" --upi rahul@testbank -p 1234 -b 25000
-
-# Create a blacklisted syndicate mule account to test fraud blocking
-python server_quickstart/local_manager.py create -u evil_bot -n "Evil Mule Node" --upi evil.mule@darkbank -p 0000 -b 0 --evil
-```
-
-#### 💰 Balance Operations
-```bash
-# Check balance of any account
-python server_quickstart/local_manager.py balance -u rahul
-python server_quickstart/local_manager.py balance -u rahul@testbank
-
-# Deposit / Add money to an account
-python server_quickstart/local_manager.py add-balance -u rahul -a 5000
-
-# Deduct / Withdraw money from an account
-python server_quickstart/local_manager.py deduct-balance -u rahul -a 2000
-```
-
-#### 🔐 Security & Administration
-```bash
-# Change account UPI PIN
-python server_quickstart/local_manager.py set-pin -u rahul -p 9988
-
-# List all accounts in your local database
-python server_quickstart/local_manager.py list
-
-# Delete an account
-python server_quickstart/local_manager.py delete -u rahul
-```
-
-#### 💳 Simulate Payments via Terminal (Curl / HTTP)
-```bash
-# Test an approved retail payment
-curl -X POST http://127.0.0.1:8000/api/payment/process \
-  -H "Content-Type: application/json" \
-  -d '{"sender_id": "rahul", "receiver_id": "amit@testbank", "amount": 500.0, "pin": "9988"}'
-
-# Test a critical balance drain fraud attempt (blocked by ML model)
-curl -X POST http://127.0.0.1:8000/api/payment/process \
-  -H "Content-Type: application/json" \
-  -d '{"sender_id": "rahul", "receiver_id": "amit@testbank", "amount": 27900.0, "pin": "9988"}'
-```
-
-<br/>
+## 📱 4. Android Client App (`app/`)
+The native Android banking client is built in **Kotlin 2.0** and **Jetpack Compose**, featuring:
+- **Liquid Glass Aesthetics:** Frosted blur layers, gradient reflections, and dark/light dynamic theme switching.
+- **Privacy-First Telemetry:** Random per-install UUIDs, display projection checks, and specific package queries without `QUERY_ALL_PACKAGES`.
+- **In-Ledger Reporting:** Built-in "Report This Transaction (Not Me)" action sending dispute feedback to `/api/feedback`.
+- **Step-Up Prompts:** Integrated BiometricPrompt and tactile numeric keypad.
 
 ---
 
-## 👥 5. Live Testing & Simulation Accounts
-
-Users can tap **"Register Now"** directly on the mobile app home screen to create an account, or create an account via the local CLI:
-
-```bash
-# Create a test account instantly
-python server_quickstart/local_manager.py create -u demo_user -n "Demo Tester" --upi demo@testbank -p 1234 -b 50000
-```
-
-### ⚠️ Simulated Blacklisted Syndicate & Mule Accounts
-Attempting transfers to these flagged addresses tests the real-time interception pipeline:
-| Entity / Flagged Name | Flagged UPI ID | Threat Classification | Interception Outcome |
-| :--- | :--- | :--- | :--- |
-| **Dark Mule Node 01** | `evil.darkmule@darkpay` | Blacklisted Mule Node | **BLOCKED (Blacklist Rule)** |
-| **Syndicate Phisher X** | `evil.phisher@shadowbank` | Phishing Syndicate Node | **BLOCKED (Blacklist Rule)** |
-| **Launderer Ghost Hub** | `evil.launderer@ghostupi` | Money Laundering Target | **BLOCKED (Blacklist Rule)** |
-
-### 🧪 Key Fraud Scenarios to Test:
-1. **Critical Liquidity Drain**: Attempt to transfer >95% of an account's total available balance in a single payment (e.g. ₹ 49,000 from a ₹ 50,000 balance). The contextual behavioral engine and Random Forest classifier flag the sudden liquidity drain and intercept the transfer.
-2. **Blacklisted Recipient**: Send funds to any of the evil addresses above (`evil.darkmule@darkpay`). The heuristic filter immediately blocks the transaction.
-3. **Normal Retail Transfer**: Sending standard everyday amounts (e.g. ₹ 200 - ₹ 1,000) evaluates safely and receives immediate `APPROVED` status in under 15ms.
-
-<br/>
+## 📚 5. Documentation Directory
+- [**Model Card (`docs/MODEL_CARD.md`)**](docs/MODEL_CARD.md): Data sources, metrics, fairness, limitations, and update procedures.
+- [**API Specification (`docs/API.md`)**](docs/API.md): Request/response fields, optional telemetry, reason codes, and actions.
+- [**Security & Threat Model (`docs/SECURITY.md`)**](docs/SECURITY.md): Joblib hash checks, bcrypt PIN hashing, audit logs, and deployment requirements.
+- [**Device Privacy Notice (`docs/DEVICE_TELEMETRY_PRIVACY.md`)**](docs/DEVICE_TELEMETRY_PRIVACY.md): Telemetry minimization guidelines.
+- [**Adversarial Audit Report (`reports/attack_report.md`)**](reports/attack_report.md): Findings and leakage numbers from red-team penetration tests.
 
 ---
 
-## 🚀 6. How to Get & Run the App
-
-### Option A: Install Pre-Built APK (Fastest)
-1. Head over to the [GitHub Releases](https://github.com/Shiva-Try2Hack/Smart-Fraud-Detection-Framework-for-Digital-Banking-Using-Predictive-Modelling-/releases) page.
-2. Download `app-debug.apk`.
-3. Open and install on your Android device (Android 7.0+ / API 24+ supported).
-4. Launch **NEXUS PAY**, log in with any test account above, and test payments!
-
-### Option B: Build from Source in Android Studio
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/Shiva-Try2Hack/Smart-Fraud-Detection-Framework-for-Digital-Banking-Using-Predictive-Modelling-.git
-   ```
-2. Launch **Android Studio** (Ladybug / Koala or newer recommended).
-3. Select **Open** and choose the `app/` directory from the repository.
-4. Allow Gradle to synchronize dependencies.
-5. Click **Run** (`Shift + F10`) or navigate to **Build ➔ Build Bundle(s) / APK(s) ➔ Build APK(s)**.
-
-<br/>
-
----
-
-## 📄 7. License & Testing Disclaimer
-- **License**: This project is licensed under the terms of the [MIT License](LICENSE.txt).
-- **Disclaimer**: Provided strictly "as-is" for educational, academic, and artificial intelligence predictive testing purposes. No liability is assumed for unauthorized use or misinterpretation of financial risk scoring predictions.
+## 📄 License
+This project is licensed under the [MIT License](LICENSE.txt).
